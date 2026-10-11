@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="resources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/resources/NovationSLMKIIDefaults.zip!/" />
+      <root url="jar://$PROJECT_DIR$/resources/Rev2FactoryBanks.zip!/" />
+      <root url="jar://$PROJECT_DIR$/resources/Matrix1000Banks.zip!/" />
+      <root url="jar://$PROJECT_DIR$/resources/EmuInstruments.zip!/" />
+      <root url="jar://$PROJECT_DIR$/resources/VenomPatches.zip!/" />
+      <root url="jar://$PROJECT_DIR$/resources/dx7.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

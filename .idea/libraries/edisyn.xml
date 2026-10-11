@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="edisyn">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/install/edisyn.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
