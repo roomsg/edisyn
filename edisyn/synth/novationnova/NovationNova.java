@@ -19,6 +19,7 @@ import static edisyn.synth.novationnova.SysexMessage.Type.*;
 
 /**
  * This class is the main EntryPoint into Edisyn
+ * TODO - currently mainly a copy from astation, needs to be lined up will with nova
  */
 public class NovationNova extends Synth {
     private static final String[] BANKS = Boundaries.BANKS.getValues();

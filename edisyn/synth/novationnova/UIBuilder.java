@@ -4,11 +4,10 @@ import edisyn.Synth;
 import edisyn.gui.*;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.Arrays;
+import java.awt.event.ItemEvent;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 import static edisyn.gui.Style.COLOR_GLOBAL;
 import static edisyn.synth.novationnova.Mappings.*;
@@ -70,23 +69,23 @@ class UIBuilder {
         JComponent arpEffectsPanel = new SynthPanel(synth);
         vbox = new VBox();
         hbox = new HBox();
-        hbox.add(createARP(Style.COLOR_A()));
+        hbox.addLast(createARP(Style.COLOR_A()));
+        vbox.add(hbox);
+        hbox = new HBox();
         hbox.add(createEffectConfig(Style.COLOR_B()));
-//        hbox.addLast(createVocoder(Style.COLOR_B()));
-//        vbox.add(hbox);
-//        hbox = new HBox();
-//        hbox.add(createDelay(Style.COLOR_C()));
-//        hbox.addLast(createReverb(Style.COLOR_A()));
-//        vbox.add(hbox);
-//        hbox = new HBox();
-//        hbox.add(createChorus(Style.COLOR_B()));
-//        hbox.addLast(createDistortion(Style.COLOR_C()));
-//        vbox.add(hbox);
-//        hbox = new HBox();
-//        hbox.add(createEqualizer(Style.COLOR_A()));
-//        hbox.addLast(createPan(Style.COLOR_B()));
-//        vbox.add(hbox);
-//
+        hbox.addLast(createDelay(Style.COLOR_C()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createReverb(Style.COLOR_A()));
+        hbox.add(createChorus(Style.COLOR_B()));
+        hbox.addLast(createDistortion(Style.COLOR_C()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createPan(Style.COLOR_B()));
+        hbox.add(createEqualizer(Style.COLOR_A()));
+        hbox.addLast(createVocoder(Style.COLOR_B()));
+        vbox.add(hbox);
+
         arpEffectsPanel.add(vbox, BorderLayout.CENTER);
         synth.addTab("Arp Effects", arpEffectsPanel);
         }
@@ -129,17 +128,16 @@ class UIBuilder {
         return categoryGeneral;
         }
 
+
     private JComponent createOscillator(final int osc, Color color) {
         Category category = new Category(synth, "Oscillator " + osc, color);
         category.makePasteable("osc");
 
         HBox hbox = new HBox();
-
         VBox vbox = new VBox();
         vbox.add(createChooser("Waveform", Mappings.find("OSC%d_WAVEFORM", osc)));
         hbox.add(vbox);
 
-        // NOTE - would probably be nicer to have next 2 combined into a single dial [-24, +36]
         hbox.add(createLabelledDial("Octave", Mappings.find("OSC%d_OCTAVE", osc), color));
         hbox.add(createLabelledDial("Semitone", Mappings.find("OSC%d_SEMITONE", osc), color));
         hbox.add(createLabelledDial("Detune", Mappings.find("OSC%d_FINE_TUNE", osc), color));
@@ -147,12 +145,18 @@ class UIBuilder {
         hbox.add(createLabelledDial(Arrays.asList("Key", "Sync"), Mappings.find("OSC%d_KEY_SYNC", osc), color));
         hbox.add(createLabelledDial(Arrays.asList("Sync", "Skew"), Mappings.find("OSC%d_SYNC_SKEW", osc), color));
         hbox.add(createLabelledDial(Arrays.asList("Sync", "Formant", "Width"), Mappings.find("OSC%d_SYNC_FORMANT_WIDTH", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO1", "Amount"), Mappings.find("OSC%d_MODWHEEL_LFO1_AMOUNT", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO1", "Amount"), Mappings.find("OSC%d_AFTERTOUCH_LFO1_AMOUNT", osc), color));
+
         // mod matrix
-        hbox.add(createLabelledDial("Mix", Mappings.find("OSC%d_MIX", osc), color));
-        hbox.add(createLabelledDial("Pitch", Mappings.find("OSC%d_PITCH", osc), color));
-        hbox.add(createLabelledDial("Width", Mappings.find("OSC%d_PULSE_WIDTH", osc), color));
-        hbox.add(createLabelledDial("Sync", Mappings.find("OSC%d_SYNC", osc), color));
-        hbox.add(createLabelledDial("Soften", Mappings.find("OSC%d_SOFTEN", osc), color));
+        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        modulationDestinationMappings.put("Mix", Mappings.find("OSC%d_MIX", osc));
+        modulationDestinationMappings.put("Pitch", Mappings.find("OSC%d_PITCH", osc));
+        modulationDestinationMappings.put("Width", Mappings.find("OSC%d_WIDTH", osc));
+        modulationDestinationMappings.put("Sync", Mappings.find("OSC%d_SYNC", osc));
+        modulationDestinationMappings.put("Soften", Mappings.find("OSC%d_SOFTEN", osc));
+        JComponent modulationPanel = createModulationPanel(Mappings.find("MODULATION_OSC%d", osc), modulationDestinationMappings, color);
+        hbox.add(modulationPanel);
 
         category.add(hbox, BorderLayout.CENTER);
         return category;
@@ -162,68 +166,79 @@ class UIBuilder {
         Category category = new Category(synth, "Xmod " + xmod + "x3", color);
         category.makePasteable("xmod");
 
-        HBox hbox = new HBox();
+        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        modulationDestinationMappings.put("Mix", Mappings.find("XMOD%d_MIX", xmod));
+        JComponent modulationPanel = createModulationPanel(Mappings.find("MODULATION_XMOD%d", xmod), modulationDestinationMappings, color);
 
-        VBox vbox = new VBox();
-        TextLabel label = new TextLabel("<  Mix  >");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        // hack - for esthetical reasons
-        label.setPreferredSize(new Dimension(90,20));
-        vbox.add(label, BorderLayout.NORTH);
-        hbox.add(vbox);
-
-        // mod matrix
-        hbox.add(createLabelledDial("Level", Mappings.find("XMOD%d_MIX", xmod), color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo1", "Depth"), Mappings.find("XMOD%d_MIX_LFO1_DEPTH", xmod), color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo2", "Depth"), Mappings.find("XMOD%d_MIX_LFO2_DEPTH", xmod), color));
-        hbox.add(createLabelledDial(Arrays.asList("Env2", "Depth"), Mappings.find("XMOD%d_MIX_ENV2_DEPTH", xmod), color));
-        hbox.add(createLabelledDial(Arrays.asList("Env3", "Depth"), Mappings.find("XMOD%d_MIX_ENV3_DEPTH", xmod), color));
-        hbox.add(createLabelledDial(Arrays.asList("Wheel", "Depth"), Mappings.find("XMOD%d_MIX_WHEEL_DEPTH", xmod), color));
-
-        category.add(hbox, BorderLayout.CENTER);
+        category.add(modulationPanel, BorderLayout.CENTER);
         return category;
     }
 
     private JComponent createNoise(Color color) {
         Category category = new Category(synth, "Noise", color);
-        category.makePasteable("xmod");
 
+        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        modulationDestinationMappings.put("Mix", NOISE_MIX);
+        modulationDestinationMappings.put("Soften", NOISE_SOFTEN);
+        JComponent modulationPanel = createModulationPanel(MODULATION_NOISE, modulationDestinationMappings, color);
+
+        category.add(modulationPanel, BorderLayout.CENTER);
+        return category;
+    }
+
+    private JComponent createModulationPanel(Mappings modulationDestinationMapping, Map<String, Mappings> mappings, Color color) {
         HBox hbox = new HBox();
 
-        // mod matrix - level
         VBox vbox = new VBox();
-        TextLabel label = new TextLabel("<  Mix  >");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        // hack - for esthetical reasons
-        label.setPreferredSize(new Dimension(90,20));
-        vbox.add(label, BorderLayout.NORTH);
+        Chooser chooser = createChooser("Modulation Destination", modulationDestinationMapping);
+        vbox.add(chooser);
         hbox.add(vbox);
 
-        hbox.add(createLabelledDial("Level", NOISE_MIX, color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo1", "Depth"), NOISE_MIX_LFO1_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo2", "Depth"), NOISE_MIX_LFO2_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Env2", "Depth"), NOISE_MIX_ENV2_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Env3", "Depth"), NOISE_MIX_ENV3_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Wheel", "Depth"), NOISE_MIX_WHEEL_DEPTH, color));
+        List<String> modulationDestinations = Arrays.asList(modulationDestinationMapping.getBoundaries().getValues());
+        Set<String> modulationDestinationsSet = new HashSet<>(modulationDestinations);
+        Set<String> expectedModulationDestinations = mappings.keySet();
+        if (!modulationDestinationsSet.equals(expectedModulationDestinations)) {
+            throw new IllegalStateException("Unexpected modulation destinations:" + modulationDestinationsSet + " VS " + expectedModulationDestinations);
+        }
 
-        // mod matrix - soften
-        vbox = new VBox();
-        label = new TextLabel("< Soften >");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        // hack - for esthetical reasons
-        label.setPreferredSize(new Dimension(90,20));
-        vbox.add(label, BorderLayout.NORTH);
-        hbox.add(vbox);
+        List<JPanel> panels = new ArrayList<>();
+        for (String modulationDestination:modulationDestinations) {
+            JPanel panel = new JPanel();
+            panels.add(panel);
+            Mappings modulationDesination = mappings.get(modulationDestination);
+            // TODO small hack here for the sake of consistent layout
+            panel.add(createLabelledDial(Arrays.asList("Level", "-"), modulationDesination, color));
+            panel.add(createLabelledDial(Arrays.asList("Lfo1", "Depth"), Mappings.valueOf(modulationDesination.name() + "_LFO1_DEPTH"), color));
+            panel.add(createLabelledDial(Arrays.asList("Lfo2", "Depth"), Mappings.valueOf(modulationDesination.name() + "_LFO2_DEPTH"), color));
+            panel.add(createLabelledDial(Arrays.asList("Env2", "Depth"), Mappings.valueOf(modulationDesination.name() + "_ENV2_DEPTH"), color));
+            panel.add(createLabelledDial(Arrays.asList("Env3", "Depth"), Mappings.valueOf(modulationDesination.name() + "_ENV3_DEPTH"), color));
+            panel.add(createLabelledDial(Arrays.asList("Wheel", "Depth"), Mappings.valueOf(modulationDesination.name() + "_WHEEL_DEPTH"), color));
 
-        hbox.add(createLabelledDial("Soften", NOISE_SOFTEN, color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo1", "Depth"), NOISE_SOFTEN_LFO1_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Lfo2", "Depth"), NOISE_SOFTEN_LFO2_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Env2", "Depth"), NOISE_SOFTEN_ENV2_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Env3", "Depth"), NOISE_SOFTEN_ENV3_DEPTH, color));
-        hbox.add(createLabelledDial(Arrays.asList("Wheel", "Depth"), NOISE_SOFTEN_WHEEL_DEPTH, color));
+            // keep UI consistent
+            panel.setBackground(Style.BACKGROUND_COLOR());
 
-        category.add(hbox, BorderLayout.CENTER);
-        return category;
+            hbox.add(panel);
+        }
+
+        // show/hide controls upon user selected
+        JComboBox combo = chooser.getCombo();
+        combo.addItemListener(il -> {
+            if (il.getStateChange() == ItemEvent.SELECTED) {
+                refreshPanels(combo, panels);
+            }
+        });
+        // next not working ?!
+        //combo.setEnabled(combo.getItemCount() > 1);
+        refreshPanels(combo, panels);
+        return hbox;
+    }
+
+    public void refreshPanels(JComboBox combo, List<JPanel> panels) {
+        int selection = combo.getSelectedIndex();
+        for (int i = 0; i < panels.size(); ++i) {
+            panels.get(i).setVisible(selection == i);
+//            panels.get(i).updateUI();
+        }
     }
 
     private JComponent createPortamento(Color color) {
@@ -240,45 +255,6 @@ class UIBuilder {
         return category;
         }
 
-//    private JComponent createPitchModulation(Color color) {
-//        Category category = new Category(synth, "Pitch Mod", color);
-//
-//        HBox hbox = new HBox();
-//        hbox.add(createLabelledDial(Arrays.asList("Modwheel", "Depth"), OSCS_MODWHEEL_PITCH_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Depth"), OSCS_AFTERTCH_PITCH_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Breath", "Depth"), OSCS_BREATH_PITCH_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO1 Depth"), OSCS_MODWHEEL_LFO1_PITCH_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO1 Depth"), OSCS_AFTERTCH_LFO1_PITCH_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Breath", "LFO1 Depth"), OSCS_BREATH_LFO1_PITCH_DEPTH, color));
-//
-//        category.add(hbox, BorderLayout.CENTER);
-//        return category;
-//        }
-//
-//    private JComponent createAmpModulation(Color color) {
-//        Category category = new Category(synth, "Amp Mod", color);
-//
-//        HBox hbox = new HBox();
-//        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "Depth"), OSCS_MODWHEEL_AMPLITUDE_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Depth"), OSCS_AFTERTCH_AMPLITUDE_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Breath", "Depth"), OSCS_BREATH_AMPLITUDE_DEPTH, color));
-//
-//        category.add(hbox, BorderLayout.CENTER);
-//        return category;
-//        }
-
-//    private JComponent createExtAudio(Color color) {
-//        Category category = new Category(synth, "External Audio", color);
-//
-//        HBox hbox = new HBox();
-//        VBox vbox = new VBox();
-//        vbox.add(createCheckBox("Trigger", EXT_AUDIO_TRIGGER));
-//        vbox.add(createCheckBox("Direct To FX", EXT_AUDIO_TO_FX));
-//        hbox.add(vbox);
-//        category.add(hbox, BorderLayout.CENTER);
-//        return category;
-//        }
-
     private JComponent createFilter(Color color) {
         Category category = new Category(synth, "Filter", color);
         HBox mainhbox = new HBox();
@@ -290,25 +266,27 @@ class UIBuilder {
 
         VBox vbox2 = new VBox();
         HBox hbox = new HBox();
-        hbox.add(createLabelledDial("Frequency", FILTER_FREQ, color));
+        hbox.add(createLabelledDial("Frequency", FILTER_FREQUENCY, color));
         hbox.add(createLabelledDial("Resonance", FILTER_RESONANCE, color));
         hbox.add(createLabelledDial("Overdrive", FILTER_OVERDRIVE, color));
         hbox.add(createLabelledDial("Key Track", FILTER_KEY_TRACK, color));
         hbox.add(createLabelledDial("Q Normalize", FILTER_Q_NORMALIZE, color));
         hbox.add(createLabelledDial("Special Width", FILTER_SPECIAL_WIDTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "Depth"), FILTER_MODWHEEL_FREQUENCY_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Mod Env", "Depth"), FILTER_ENV2_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("LFO2", "Depth"), FILTER_LFO2_DEPTH, color));
+        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO2", "Frequency", "Amount"), FILTER_MODWHEEL_LFO2_FREQUENCY_AMOUNT, color));
+        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO2", "Resonance", "Amount"), FILTER_MODWHEEL_LFO2_RESONANCE_AMOUNT, color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2", "Frequency", "Amount"), FILTER_AFTERTOUCH_LFO2_FREQUENCY_AMOUNT, color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2", "Resonance", "Amount"), FILTER_AFTERTOUCH_LFO2_RESONANCE_AMOUNT, color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Frequency", "Amount"), FILTER_AFTERTOUCH_FREQUENCY_AMOUNT, color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Resonance", "Amount"), FILTER_AFTERTOUCH_RESONANCE_AMOUNT, color));
         vbox2.add(hbox);
 
-//        hbox = new HBox();
-//        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Depth"), FILTER_AFTERTCH_FREQUENCY_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Breath", "Depth"), FILTER_BREATH_FREQUENCY_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO2 depth"), FILTER_MODWHEEL_LFO2_FREQUENCY_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2 depth"), FILTER_AFTERTCH_LFO2_FREQUENCY_DEPTH, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Breath", "LFO2 depth"), FILTER_BREATH_LFO2_FREQUENCY_DEPTH, color));
-//        vbox2.add(hbox);
         mainhbox.add(vbox2);
+
+        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        modulationDestinationMappings.put("Frequency", FILTER_FREQUENCY);
+        modulationDestinationMappings.put("Resonance", FILTER_RESONANCE);
+        JComponent modulationPanel = createModulationPanel(MODULATION_FILTER, modulationDestinationMappings, color);
+        mainhbox.add(modulationPanel);
 
         category.add(mainhbox, BorderLayout.CENTER);
         return category;
@@ -370,17 +348,24 @@ class UIBuilder {
         HBox hbox = new HBox();
         VBox vbox = new VBox();
         vbox.add(createChooser("Waveform", Mappings.find("LFO%d_WAVEFORM", lfo)));
-        vbox.add(createChooser("Trigger", Mappings.find("LFO%d_TRIGGER", lfo)));
         vbox.add(createChooser("Range", Mappings.find("LFO%d_RANGE", lfo)));
+        hbox.add(vbox);
+        vbox = new VBox();
+        vbox.add(createChooser("Trigger", Mappings.find("LFO%d_TRIGGER", lfo)));
+        vbox.add(createChooser("Delay Trigger", Mappings.find("LFO%d_DELAY_TRIGGER", lfo)));
         hbox.add(vbox);
 
         Mappings mappingSync = find("LFO%d_SPEED_SYNC", lfo);
         hbox.add(createLabelledDial(Arrays.asList("Speed", "(Sync)"), mappingSync, color));
         Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Speed", "(Non-Sync)"), Mappings.find("LFO%d_SPEED_NON_SYNC", lfo), color));
+        hbox.add(createLabelledDial("Delay", Mappings.find("LFO%d_DELAY", lfo), color));
         // disable non-sync component when sync is in control: value != 0 (N/A)
         synth.getModel().register(mappingSync.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
 
-        hbox.add(createLabelledDial("Delay", Mappings.find("LFO%d_DELAY", lfo), color));
+        hbox.add(createLabelledDial(Arrays.asList("Env3", "Speed", "Depth"), Mappings.find("LFO%d_ENV3_SPEED_AMOUNT", lfo), color));
+        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "Speed", "Depth"), Mappings.find("LFO%d_MODWHEEL_SPEED_AMOUNT", lfo), color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Speed", "Depth"), Mappings.find("LFO%d_AFTERTOUCH_SPEED_AMOUNT", lfo), color));
+        hbox.add(createLabelledDial("Offset", Mappings.find("LFO%d_OFFSET", lfo), color));
 
         category.add(hbox, BorderLayout.CENTER);
         return category;
@@ -391,21 +376,35 @@ class UIBuilder {
 
         HBox hbox = new HBox();
 
-//        VBox vbox = new VBox();
-//        vbox.add(createCheckBox("Enable", ARP_ON_OFF));
-//        vbox.add(createCheckBox("Key Sync", ARP_KEY_SYNC));
-//        vbox.add(createCheckBox("Latch", ARP_LATCH));
-//        hbox.add(vbox);
-//
-//        vbox = new VBox();
-//        vbox.add(createChooser("Pattern", ARP_PATTERN));
-//        vbox.add(createChooser("Note Destination", ARP_NOTE_DESTINATION));
-//        hbox.add(vbox);
-//
-//        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), ARP_RATE_SYNC, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Rate", "(BPM)"), ARP_RATE_NON_SYNC, color));
-//        hbox.add(createLabelledDial("Octaves", ARP_OCTAVES, color));
-//        hbox.add(createLabelledDial("Gate Time", ARP_GATE_TIME, color));
+        VBox vbox = new VBox();
+        vbox.add(createCheckBox("Enable", ARP_ON_OFF, true));
+        vbox.add(createCheckBox("Latch", ARP_LATCH));
+        vbox.add(createCheckBox("Mute", ARP_MUTE));
+        vbox.add(createCheckBox("Key Reset", ARP_KEY_SYNC, true));
+        vbox.add(createCheckBox("Constant Pitch", ARP_CONSTANT_PITCH));
+        vbox.add(createCheckBox("Realtime Transpose", ARP_REALTIME_TRANSPOSE, true));
+        vbox.add(createCheckBox("Output Ranging", ARP_OUTPUT_RANGING));
+        hbox.add(vbox);
+
+        vbox = new VBox();
+        vbox.add(createChooser("Velocity", ARP_VELOCITY));
+        vbox.add(createChooser("Edit Gate", ARP_EDIT_GATE));
+        vbox.add(createChooser("Output", ARP_OUTPUT));
+        hbox.add(vbox);
+
+        vbox = new VBox();
+        vbox.add(createChooser("Fill In", ARP_FILL_IN));
+        vbox.add(createChooser("Latch Type", ARP_LATCH_TYPE));
+        vbox.add(createChooser("Quantize", ARP_QUANTIZE));
+        hbox.add(vbox);
+
+        hbox.add(createLabelledDial("Pattern Bank", ARP_PATTERN_BANK, color));
+        hbox.add(createLabelledDial("Pattern", ARP_PATTERN, color));
+        // TODO - enable/disable
+        hbox.add(createLabelledDial("Speed", ARP_SPEED, color));
+        hbox.add(createLabelledDial("Speed Sync", ARP_SPEED_SYNC, color));
+        hbox.add(createLabelledDial("Octaves", ARP_OCTAVES, color));
+        hbox.add(createLabelledDial("Gate Time", ARP_GATE_TIME, color));
 
         category.add(hbox);
         return category;
@@ -414,141 +413,138 @@ class UIBuilder {
     private JComponent createEffectConfig(Color color) {
         Category category = new Category(synth, "Effect Config", color);
         HBox hbox = new HBox();
-        hbox.add(createLabelledDial(Arrays.asList("Effect", "Config", "Morph"), EFFECT_MORPH, color));
+        VBox vbox = new VBox();
+        vbox.add(createChooser("Config", EFFECTS_CONFIG));
+        vbox.add(createChooser("Pass to Effects", EFFECTS_INPUT));
+        hbox.add(vbox);
+        hbox.add(createLabelledDial(Arrays.asList("Config", "Morph"), EFFECTS_CONFIG_MORPH, color));
         category.add(hbox);
         return category;
     }
         //
-//    private JComponent createDelay(Color color) {
-//        Category category = new Category(synth, "Delay", color);
-//        HBox hbox = new HBox();
+    private JComponent createDelay(Color color) {
+        Category category = new Category(synth, "Delay", color);
+        HBox hbox = new HBox();
 //
-//        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), DELAY_SEND_LEVEL, color));
+        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), DELAY_SEND_LEVEL, color));
 //        hbox.add(createLabelledDial("Modwheel", DELAY_SEND_MODWHEEL, color));
-//
-//        hbox.add(createLabelledDial(Arrays.asList("Time", "(Sync)"), DELAY_TIME_SYNC, color));
-//        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Time", "(Non-Sync)"), DELAY_TIME_NON_SYNC, color));
-//        // disable non-sync component when sync is in control: value != 0 (N/A)
+
+        hbox.add(createLabelledDial(Arrays.asList("Time", "(Sync)"), DELAY_TIME_SYNC, color));
+        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Time", "(Non-Sync)"), DELAY_TIME_NON_SYNC, color));
+        // disable non-sync component when sync is in control: value != 0 (N/A)
 //        synth.getModel().register(DELAY_TIME_SYNC.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
+
+        hbox.add(createLabelledDial("Feedback", DELAY_FEEDBACK, color));
+        hbox.add(createLabelledDial(Arrays.asList("Ratio", "(L-R)"), DELAY_RATIO, color));
+        hbox.add(createLabelledDial(Arrays.asList("Stereo", "Width"), DELAY_STEREO_WIDTH, color));
+        hbox.add(createLabelledDial("HF Damp", DELAY_HF_DAMP, color));
+        hbox.add(createLabelledDial("Mod Wheel", DELAY_SEND_MODWHEEL, color));
+
+        category.add(hbox);
+        return category;
+        }
 //
-//        hbox.add(createLabelledDial("Feedback", DELAY_FEEDBACK, color));
-//
-//        hbox.add(createLabelledDial(Arrays.asList("Ratio", "(L-R)"), DELAY_RATIO, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Stereo", "Width"), DELAY_STEREO_WIDTH, color));
-//
-//        category.add(hbox);
-//        return category;
-//        }
-//
-//    private JComponent createReverb(Color color) {
-//        Category category = new Category(synth, "Reverb", color);
-//
-//        HBox hbox = new HBox();
+    private JComponent createReverb(Color color) {
+        Category category = new Category(synth, "Reverb", color);
+
+        HBox hbox = new HBox();
 //        VBox vbox = new VBox();
 //        vbox.add(createChooser("Type", REVERB_TYPE));
 //        hbox.add(vbox);
-//        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), REVERB_SEND_LEVEL, color));
-//        hbox.add(createLabelledDial("Mod Wheel", REVERB_SEND_MODWHEEL, color));
-//        hbox.add(createLabelledDial("Decay", REVERB_DECAY, color));
-//        category.add(hbox);
+        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), REVERB_SEND_LEVEL, color));
+        hbox.add(createLabelledDial("Mod Wheel", REVERB_SEND_MODWHEEL, color));
+        hbox.add(createLabelledDial("Decay", REVERB_DECAY, color));
+//        hbox.add(createLabelledDial("HF Damp", REVERB_HF_DAMP, color));
+        category.add(hbox);
+
+        return category;
+        }
 //
-//        return category;
-//        }
-//
-//    private JComponent createChorus(Color color) {
-//        Category category = new Category(synth, "Chorus", color);
-//        HBox hbox = new HBox();
+    private JComponent createChorus(Color color) {
+        Category category = new Category(synth, "Chorus", color);
+        HBox hbox = new HBox();
 //        VBox vbox = new VBox();
 //        vbox.add(createChooser("Type", CHORUS_TYPE));
 //        vbox.add(createChooser("Global Sync", CHORUS_GLOBAL_SYNC));
 //        hbox.add(vbox);
-//        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), CHORUS_SEND_LEVEL, color));
-//        hbox.add(createLabelledDial("Mod Wheel", CHORUS_SEND_MODWHEEL, color));
+        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), CHORUS_SEND_LEVEL, color));
+        hbox.add(createLabelledDial("Mod Wheel", CHORUS_MODWHEEL_DEPTH, color));
 //
 //        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), CHORUS_RATE_SYNC, color));
-//        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), CHORUS_RATE_NON_SYNC, color));
+        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), CHORUS_RATE_NON_SYNC, color));
 //        // disable non-sync component when sync is in control: value != 0 (N/A)
 //        synth.getModel().register(CHORUS_RATE_SYNC.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
 //
-//        hbox.add(createLabelledDial("Feedback", CHORUS_FEEDBACK, color));
-//        hbox.add(createLabelledDial("Depth", CHORUS_MOD_DEPTH, color));
+        hbox.add(createLabelledDial("Feedback", CHORUS_FEEDBACK, color));
+        hbox.add(createLabelledDial("Depth", CHORUS_MOD_DEPTH, color));
 //        hbox.add(createLabelledDial(Arrays.asList("Centre", "Point"), CHORUS_MOD_CENTRE_POINT, color));
 //
-//        category.add(hbox);
-//        return category;
-//        }
+        category.add(hbox);
+        return category;
+        }
 //
-//    private JComponent createDistortion(Color color) {
-//        Category category = new Category(synth, "Distortion", color);
-//        HBox hbox = new HBox();
+    private JComponent createDistortion(Color color) {
+        Category category = new Category(synth, "Distortion", color);
+        HBox hbox = new HBox();
 //
-//        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), DISTORTION_LEVEL, color));
-//        hbox.add(createLabelledDial("Mod Wheel", DISTORTION_MODWHEEL, color));
+        hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), DISTORTION_LEVEL, color));
+        hbox.add(createLabelledDial("Mod Wheel", DISTORTION_MODWHEEL, color));
 //        hbox.add(createLabelledDial("Compensation", DISTORTION_COMPENSATION, color));
 //
-//        category.add(hbox);
-//        return category;
-//        }
-//
-//    private JComponent createEqualizer(Color color) {
-//        Category category = new Category(synth, "Equalizer", color);
-//
-//        HBox hbox = new HBox();
-//
-//        VBox vbox = new VBox();
-//        vbox.add(createChooser("Global Sync", EQUALIZER_GLOBAL_SYNC));
-//        hbox.add(vbox);
-//
-//        hbox.add(createLabelledDial("Level", EQUALIZER_LEVEL, color));
-//        hbox.add(createLabelledDial("Frequency", EQUALIZER_FREQUENCY, color));
-//        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), EQUALIZER_RATE_SYNC, color));
-//        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), EQUALIZER_RATE_NON_SYNC, color));
-//        // disable non-sync component when sync is in control: value != 0 (N/A)
-//        synth.getModel().register(EQUALIZER_RATE_SYNC.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
-//
-//        hbox.add(createLabelledDial("Mod Depth", EQUALIZER_MOD_DEPTH, color));
-//
-//        category.add(hbox);
-//        return category;
-//        }
-//
-//
-//    private JComponent createPan(Color color) {
-//        Category category = new Category(synth, "Panning", color);
-//
-//        HBox hbox = new HBox();
-//
-//        VBox vbox = new VBox();
-//        vbox.add(createChooser("Global Sync", PANNING_GLOBAL_SYNC));
-//        hbox.add(vbox);
-//
-//        hbox.add(createLabelledDial("Position", PANNING_POSITION, color));
+        category.add(hbox);
+        return category;
+        }
+
+    private JComponent createEqualizer(Color color) {
+        Category category = new Category(synth, "Equalizer", color);
+
+        HBox hbox = new HBox();
+        hbox.add(createLabelledDial("Bass", EQUALIZER_BASS, color));
+        hbox.add(createLabelledDial("Treble", EQUALIZER_TREBLE, color));
+        hbox.add(createLabelledDial("Comb Frequency", EQUALIZER_COMB_FREQUENCY, color));
+        hbox.add(createLabelledDial("Comb Boost", EQUALIZER_COMB_BOOST, color));
+
+        category.add(hbox);
+        return category;
+        }
+
+    private JComponent createPan(Color color) {
+        Category category = new Category(synth, "Panning", color);
+
+        HBox hbox = new HBox();
+
+        VBox vbox = new VBox();
+        vbox.add(createCheckBox("Effects", PANNING_EFFECTS));
+        hbox.add(vbox);
+
+        // TODO - check labels
+        hbox.add(createLabelledDial("Position", PANNING_POSITION, color));
 //
 //        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), PANNING_RATE_SYNC, color));
-//        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), PANNING_RATE_NON_SYNC, color));
+        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), PANNING_RATE_NON_SYNC, color));
 //        // disable non-sync component when sync is in control: value != 0 (N/A)
 //        synth.getModel().register(PANNING_RATE_SYNC.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
 //
-//        hbox.add(createLabelledDial("Depth", PANNING_MOD_DEPTH, color));
+        hbox.add(createLabelledDial("Depth", PANNING_DEPTH, color));
 //
-//        category.add(hbox);
-//        return category;
-//        }
-//
-//    private JComponent createVocoder(Color color) {
-//        Category category = new Category(synth, "Vocoder", color);
-//
-//        HBox hbox = new HBox();
+        category.add(hbox);
+        return category;
+        }
+
+    private JComponent createVocoder(Color color) {
+        Category category = new Category(synth, "Vocoder", color);
+
+        HBox hbox = new HBox();
 //        VBox vbox = new VBox();
 //        vbox.add(createChooser("Sibilance Type", VOCODER_SIBILANCE_TYPE));
 //        hbox.add(vbox);
-//        hbox.add(createLabelledDial("Balance", VOCODER_BALANCE, color));
+        hbox.add(createLabelledDial("Balance", VOCODER_BALANCE, color));
 //        hbox.add(createLabelledDial(Arrays.asList("Stereo", "Width"), VOCODER_STEREO_WIDTH, color));
 //        hbox.add(createLabelledDial(Arrays.asList("Sibilance", "Level"), VOCODER_SIBILANCE_LEVEL, color));
 //
-//        category.add(hbox);
-//        return category;
-//        }
+        category.add(hbox);
+        return category;
+        }
 
     // convenience method to create chooser
     private Chooser createChooser(String label, Mappings mappings) {
@@ -600,10 +596,15 @@ class UIBuilder {
 
     // convenience method to create checkbox
     private JComponent createCheckBox(String label, Mappings mappings) {
-        // sanity
+        return createCheckBox(label, mappings, false);
+        }
+
+    // convenience method to create checkbox
+    private JComponent createCheckBox(String label, Mappings mappings, boolean flipped) {
+        // sanity - too strict for ARP_LATCH though
         if (mappings.getBoundaries() != Boundaries.BOOLEAN) {
             throw new IllegalStateException("only boolean allowed for checkbox");
-            }
-        return new CheckBox(label, synth, mappings.getKey());
         }
-    }
+        return new CheckBox(label, synth, mappings.getKey(), flipped);
+        }
+}

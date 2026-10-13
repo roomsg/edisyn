@@ -114,15 +114,18 @@ class Convertors {
      * The definition of these convertors are solely driven by the Nova specification
      */
     enum Packed implements Convertor {
-            PACKED0(null, null, 0) {
+        PACKED_000(null, null, 0) {
             @Override
                 public void toModel(Model model, int value) {
                 if (value >= 0 && value < 5)
                     model.set(OSC1_WAVEFORM.getKey(), value);
+                // [5-9] unused
                 else if (value >= 10 && value < 15)
                     model.set(OSC2_WAVEFORM.getKey(), value - 10);
+                // [15-19] unused
                 else if (value >= 20 && value < 25)
                     model.set(OSC3_WAVEFORM.getKey(), value - 20);
+                // [25-30] unused
                 else if (value >= 30 && value < 35)
                     model.set(OSC1_OCTAVE.getKey(), value - 30);
                 else if (value >= 35 && value < 40)
@@ -139,23 +142,28 @@ class Convertors {
                     model.set(PORTAMENTO_TYPE.getKey(), value - 120);
                 else if (value >= 122 && value < 124)
                     model.set(PORTAMENTO_MODE.getKey(), value - 122);
+                else if (value >= 124 && value < 126)
+                    model.set(LFO1_DELAY_TRIGGER.getKey(), value - 124);
+                else if (value >= 126 && value < 128)
+                    model.set(LFO2_DELAY_TRIGGER.getKey(), value - 126);
                 else
                     System.out.println("#00?" + value);
                 }
 
             @Override
                 public int toSynth(Model model) {
-                // TODO - Oh Dear, FW work I guess...
+                // TODO
                 return 0;
                 }
             },
-        PACKED1(null, null, 1) {
+        PACKED_001(null, null, 1) {
             @Override
             public void toModel(Model model, int value) {
                 if (value >= 0 && value < 3)
                     model.set(FILTER_SLOPE.getKey(), value);
                 if (value >= 3 && value < 15)
                     model.set(FILTER_TYPE.getKey(), value - 3);
+                // 15 unused
                 if (value >= 16 && value < 20)
                     model.set(LFO1_WAVEFORM.getKey(), value - 16);
                 else if (value >= 20 && value < 24)
@@ -163,20 +171,44 @@ class Convertors {
                 else if (value >= 24 && value < 26)
                     model.set(LFO1_TRIGGER.getKey(), value - 24);
                 else if (value >= 26 && value < 28)
-                    model.set(LFO2_TRIGGER.getKey(), value -26);
+                    model.set(LFO2_TRIGGER.getKey(), value - 26);
                 else if (value >= 28 && value < 31)
-                    model.set(LFO1_RANGE.getKey(), value -28);
+                    model.set(LFO1_RANGE.getKey(), value - 28);
                 else if (value >= 31 && value < 34)
-                    model.set(LFO2_RANGE.getKey(), value -31);
+                    model.set(LFO2_RANGE.getKey(), value - 31);
                 else if (value >= 34 && value < 42) {
                     int val = value - 34;
                     byte b = (byte) ((val & 0x7) ^ 0x7);
-                    model.set(ENVELOPE3_TRIGGER.getKey(), 0x1 & (b >>> 0));
+                    model.set(ENVELOPE3_TRIGGER.getKey(), 0x1 & (b));
                     model.set(ENVELOPE2_TRIGGER.getKey(), 0x1 & (b >>> 1));
                     model.set(ENVELOPE1_TRIGGER.getKey(), 0x1 & (b >>> 2));
                 }
                 else if (value >= 42 && value < 52)
-                    model.set(GLIDE_TYPE.getKey(), value -42);
+                    model.set(GLIDE_TYPE.getKey(), value - 42);
+                // TODO
+                else if (value >= 70 && value < 72)
+                    model.set(ARP_CONSTANT_PITCH.getKey(), value - 70);
+                else if (value >= 72 && value < 74)
+                    model.set(ARP_ON_OFF.getKey(), value - 72);
+                else if (value >= 74 && value < 76)
+                    model.set(ARP_KEY_SYNC.getKey(), value - 74);
+                else if (value >= 76 && value < 79)
+                    model.set(ARP_PATTERN_BANK.getKey(), value - 76);
+                else if (value >= 79 && value < 81)
+                    model.set(ARP_LATCH_TYPE.getKey(), value - 79);
+                else if (value >= 81 && value < 86)
+                    model.set(ARP_QUANTIZE.getKey(), value - 81);
+                else if (value >= 86 && value < 90)
+                    model.set(ARP_VELOCITY.getKey(), value - 86);
+                else if (value >= 90 && value < 92)
+                    model.set(ARP_MUTE.getKey(), value - 90);
+                else if (value >= 92 && value < 94)
+                    model.set(ARP_REALTIME_TRANSPOSE.getKey(), value - 92);
+                else if (value >= 102 && value < 105)
+                    model.set(ARP_OUTPUT.getKey(), value - 102);
+                // undocumented
+                else if (value >= 122 && value < 128)
+                    model.set(ARP_FILL_IN.getKey(), value - 122);
                 else
                     // TODO
                     System.out.println("#01?" + value);
@@ -184,11 +216,11 @@ class Convertors {
 
             @Override
             public int toSynth(Model model) {
-                // TODO - Oh Dear, FW work I guess...
+                // TODO
                 return 0;
                 }
         },
-        PACKED84(null, null, 84) {
+        PACKED_084(null, null, 84) {
             @Override
             public void toModel (Model model,int value){
                 if (value >= 0 && value < 25)
@@ -197,6 +229,7 @@ class Convertors {
                     model.set(OSC2_BENDWHEEL_AMOUNT.getKey(), value - 25);
                 else if (value >= 50 && value < 75)
                     model.set(OSC3_BENDWHEEL_AMOUNT.getKey(), value - 50);
+                // TODO
                 else if (value >= 84 && value < 86)
                     model.set(OSC_MODE.getKey(), value - 84);
                 else if (value >= 86 && value < 88)
@@ -212,10 +245,13 @@ class Convertors {
                 return 0;
             }
         },
-        PACKED100(null, null, 100) {
+        PACKED_100(null, null, 100) {
             @Override
             public void toModel (Model model,int value){
-                if (value >= 79 && value < 81)
+                if (value >= 0 && value < 35)
+                    model.set(DELAY_TIME_SYNC.getKey(), value);
+                // TODO
+                else if (value >= 79 && value < 81)
                     model.set(CONSTANT_GATE.getKey(), value - 79);
                 else if (value == 81) // unison off
                     model.set(UNISON_VOICES.getKey(), 0); // explicit off
@@ -224,10 +260,16 @@ class Convertors {
                 // TODO - fix on/off thingy
                 else if (value >= 83 && value < 90)
                     model.set(UNISON_VOICES.getKey(), value - 83 + 1); // +1 since synthetic "Off" value
+                // TODO
                 else if (value >= 92 && value < 94)
                     model.set(DCO_VCO_MODE.getKey(), value - 92); // +1 since synthetic "Off" value
+                else if (value >= 100 && value < 102)
+                    model.set(PANNING_EFFECTS.getKey(), value - 100);
                 else if (value >= 102 && value < 110)
                     model.set(FILTER_SPECIAL_WIDTH.getKey(), value - 102);
+                else if (value >= 110 && value < 112)
+                    // Delay Ration is spread over 2 packed NRPNS ?!?!
+                    model.set(DELAY_RATIO.getKey(), value - 110 + 11);
                 else
                     // TODO
                     System.out.println("#100?" + value);
@@ -239,11 +281,21 @@ class Convertors {
                 return 0;
             }
         },
-        PACKED109(null, null, 109) {
+        PACKED_109(null, null, 109) {
             @Override
-            public void toModel (Model model,int value){
-                // TODO
-                System.out.println("#109?" + value);
+            public void toModel (Model model, int value){
+                // reserved
+                if (value >= 1 && value < 5)
+                    model.set(ARP_OCTAVES.getKey(), value - 1);
+                else if (value >= 5 && value < 9)
+                    model.set(ARP_GATE_TIME.getKey(), value - 5);
+                // reserved
+                else if (value >= 96 && value < 107)
+                    model.set(DELAY_RATIO.getKey(), value - 96);
+                // reserved
+                else
+                    // TODO
+                    System.out.println("#109?" + value);
             }
 
             @Override
@@ -252,11 +304,21 @@ class Convertors {
                 return 0;
             }
         },
-        PACKED110(null, null, 110) {
+        PACKED_110(null, null, 110) {
             @Override
-            public void toModel (Model model,int value){
+            public void toModel (Model model, int value){
+                if (value >= 0 && value < 34)
+                    model.set(ARP_SPEED_SYNC.getKey(), value);
                 // TODO
-                System.out.println("#110?" + value);
+                else if (value >= 40 && value < 75)
+                    model.set(LFO1_SPEED_SYNC.getKey(), value - 40);
+                else if (value >= 78 && value < 80)
+                    model.set(ARP_OUTPUT_RANGING.getKey(), value - 78);
+                else if (value >= 80 && value < 115)
+                    model.set(LFO2_SPEED_SYNC.getKey(), value - 80);
+                else
+                    // TODO
+                    System.out.println("#110?" + value);
             }
 
             @Override
@@ -265,11 +327,17 @@ class Convertors {
                 return 0;
             }
         },
-        PACKED113(null, null, 113) {
+        PACKED_113(null, null, 113) {
             @Override
-            public void toModel (Model model,int value){
-                // TODO
-                System.out.println("#113?" + value);
+            public void toModel (Model model, int value){
+                if (value >= 36 && value < 55)
+                    model.set(EFFECTS_CONFIG.getKey(), value - 36);
+                else if (value >= 71 && value < 76) {
+                    model.set(EFFECTS_INPUT.getKey(), value - 71);
+                }
+                else
+                    // TODO
+                    System.out.println("#113?" + value);
             }
 
             @Override
@@ -308,4 +376,24 @@ class Convertors {
             return i == null ? OptionalInt.empty() : OptionalInt.of(i);
             }
         }
-    }
+
+        // one special case: boolean modelled as 0/127
+        static class ARP_LATCH extends Convertor.Straight {
+
+            ARP_LATCH(String key, Integer byteIndex, Integer cc, Integer nrpn, Boundary boundary) {
+                super(key, byteIndex, cc, nrpn, boundary);
+            }
+
+            @Override
+            public void toModel(Model model, int value) {
+                model.set(ARP_LATCH.getKey(), value / 127);
+            }
+
+            @Override
+            public int toSynth(Model model) {
+                int modelValue = model.get(ARP_LATCH.getKey());
+                return modelValue == -1 ? 0 : modelValue * 127;
+            }
+        }
+
+}

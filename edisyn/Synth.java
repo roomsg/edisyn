@@ -2550,7 +2550,7 @@ public abstract class Synth extends JComponent implements Updatable
         {
         if (getExpectsRawCCFromSynth())
             {
-            handleSynthCCOrNRPN(midi.synthParser.handleRawCC(message.getChannel(), message.getData1(), message.getData2()));
+            handleSynthhandleRPNCCOrNRPN(midi.synthParser.handleRawCC(message.getChannel(), message.getData1(), message.getData2()));
             }
         else
             {

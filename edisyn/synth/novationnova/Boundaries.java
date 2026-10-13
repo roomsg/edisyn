@@ -1,9 +1,15 @@
 package edisyn.synth.novationnova;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public enum Boundaries implements Boundary {
+    // dummy entry, only here for the sake of code simplicity
+    MODULATION_DESTINATION_OSC("Mix", "Pitch", "Width", "Sync", "Soften"),
+    MODULATION_DESTINATION_XMOD("Mix"),
+    MODULATION_DESTINATION_NOISE("Mix", "Soften"),
+    MODULATION_DESTINATION_FILTER("Frequency", "Resonance"),
     // non param related
     BANKS(IntStream.rangeClosed(1, 4).boxed().map(String::valueOf)),
     PATCH_NUMBERS(IntStream.rangeClosed(0, 99).boxed().map(String::valueOf)),
@@ -36,26 +42,41 @@ public enum Boundaries implements Boundary {
     LFO_WAVE_FORMS("Square", "Saw", "Triangle", "S&H"),
     LFO_TRIGGER("Freewheel", "KeySync"),
     LFO_RANGE("Slow", "Normal", "Fast"),
+    LFO_DELAY_TRIGGERS(ENV_TRIGGERS),
     SIBILANCE_TYPES("High Pass", "Noise"),
     REVERB_TYPES("Echo Chamber", "Small Room", "Small Hall", "Large Room", "Large Hall", "Grand Hall"),
     CHORUS_TYPES("Chorus", "Phaser"),
     KEYSYNC_PHASE("Free Running", "0", "24", "48", "72", "96", "120", "144", "168", "192", "216", "240", "264", "288", "312", "336"),
     ARP_OCTAVES("1", "2", "3", "4"),
-    ARP_NOTE_DESTINATION("Internal", "External", "Internal+External", "External+Played"),
+    ARP_GATE_TIMES("25%", "50%", "75%", "99%"),
+    ARP_OUTPUT("Program", "Program & Midi", "Midi"),
     ARP_PATTERN("Up", "Down", "Up-Down 1", "Up-Down 2", "Order", "Random"),
+    ARP_PATTERN_BANK("Mono", "Poly", "User"),
+    ARP_LATCH_TYPE("Constant", "Pattern"),
+    ARP_QUANTIZE("Off", "Mode1", "Mode2", "Mode3", "Mode4"),
+    ARP_VELOCITY("Played", "Full (127)", "Half (63)", "Programmed"),
+    ARP_EDIT_GATE("Norm", "Tie", "Rest", "Glide"),
+    ARP_FILL_IN("Off - Up", "On - Up", "Off - Down", "On - Down", "Off - Played", "On - Played"),
+    EFFECTS_CONFIG("D+R+C", "D>R>C", "D>C>R", "R>D>C", "R>C>D", "C>D>R", "C>R>D",
+            "D+[R>C]", "D+[C>R]", "R+[D>C]", "R+[C>D]", "C+[D>R]", "C+[R>D]",
+            "D>[R+C]", "R>[D+C]", "C>[D+R]",
+            "[R+C]>D", "[D+C]>R", "[D+R]>C"),
+    EFFECTS_INPUT("Program Only", "Audio Input (1) Only", "Program & Input (1)",
+            "Audio Input (2) Only", "Program & Input (2)"),
     EQUALIZER_GLOBAL_SYNC("Off", "Low", "Mid", "High"),
     CHORUS_GLOBAL_SYNC("Off", "Left", "Center", "Right"),
     PANNING_GLOBAL_SYNC(CHORUS_GLOBAL_SYNC),
     SYNC_RATES("N/A", "32t", "32", "16t", "16", "8t", "16d", "8", "4t", "8d", "4", "2t", "4d", "2", "1t", "2d",
-        "1b", "2t", "1d", "2b", "4t", "3b", "5t", "4b", "3d", "7t", "5b", "8t", "6b", "7b", "5d", "8b", "9b", "7d", "12"),
-    DELAY_SYNC_RATES(Stream.of(SYNC_RATES.values).limit(20)),
-    ARP_SYNC_RATES(Stream.of(SYNC_RATES.values)
-        // we skip the "N/A" here, since it can also not be selected on the device
-        // (unlike what is mentioned in the spec/manual)
-        .skip(1)
-        .limit(16)),
+        "1b", "2t", "1d", "2b", "4t", "3b", "5t", "4b", "3d", "7t", "5b", "8t", "6b", "7b", "5d", "8b", "6d", "7d", "8d"),
+    DELAY_SYNC_RATES(Stream.of(SYNC_RATES.values)),
+    ARP_SYNC_RATES(Arrays.stream(SYNC_RATES.values)
+            // we skip the first "N/A" here, since does not apply here
+            .skip(1)),
     ARP_NON_SYNC_RATES(0, 127, -64), // 64 -> 191 BPM
-    DELAY_RATIO("1-1", "4-3", "3-4", "3-2", "2-3", "2-1", "1-2", "3-1", "1-3", "4-1", "1-4", "1-0", "0-1"),
+    DELAY_RATIO("1-1", "4-3", "3-4", "3-2", "2-3",
+            "2-1", "1-2", "3-1", "1-3", "4-1", "1-4",
+            // note: next 2 are handled by another packed NRPN ?!?!
+            "1-0", "0-1"),
     EQUALIZER_LEVEL(IntStream.rangeClosed(0, 127).boxed().map(i -> {
                 if (i < 64) {
                     return "LP " + i;
