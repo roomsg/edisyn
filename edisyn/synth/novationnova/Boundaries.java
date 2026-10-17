@@ -33,7 +33,7 @@ public enum Boundaries implements Boundary {
     OSC_SEMITONES(IntStream.rangeClosed(-12, 12).boxed().map(String::valueOf)),
     BEND_WHEEL(OSC_SEMITONES),
     PWM_SOURCE("Manual", "LFO2", "Mod Env"), // 3 values from the docs / in practice only first 2 get evented
-    ENV_TRIGGERS("Single", "Multi"),
+    ENV_TRIGGERS("Multi", "Single"),
     MIXER_SELECT("Noise", "1*2", "Ext"),
     FILTER_TYPES("LPF", "BPF", "HPF", "RES LPF", "RES BPF", "RES HPF", "Notch", "LPF+LPF", "BPF+BPF", "HPF+HPF", "LPF+BPF", "BPF+HPF"),
     FILTER_SLOPES("12dB/Octave", "18dB/Octave", "24dB/Octave"),

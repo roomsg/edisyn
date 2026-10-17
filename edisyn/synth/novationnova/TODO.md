@@ -24,7 +24,5 @@
 ## Packed NRPN
 001: +119?
 
-
 # check edisyn
-MIDI channel ignored ?
-
+MIDI channel ignored ? -> mail sent

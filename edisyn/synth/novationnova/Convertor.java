@@ -18,7 +18,7 @@ interface Convertor {
     void toModel(Model model, int value);
 
     // extract value from model (to be used in CC, NRPN or byteIndex).
-    int toSynth(Model model);
+    int toSynth(Model model, String key);
 
     // get (MIDI-SysEx) byteIndex
     OptionalInt getByteIndex();
@@ -58,7 +58,7 @@ interface Convertor {
         }
 
         @Override
-        public int toSynth(Model model) {
+        public int toSynth(Model model, String key) {
             return model.get(key);
         }
 

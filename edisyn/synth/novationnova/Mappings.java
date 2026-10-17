@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * Enumeration containing all available synth parameters and their so-called 'mappings'.
+ * Enumeration containing all available synth/program parameters and their so-called 'mappings'.
  * <p>
  * Each and every entry is defining (the mapping between)
  * <ul>
@@ -39,8 +39,8 @@ enum Mappings {
     POLYPHONY_MODE(Convertors.Packed.PACKED_084, Boundaries.POLYPHONY_MODE),
     OSC_MODE(Convertors.Packed.PACKED_084, Boundaries.OSC_MODE),
     GLIDE_TYPE(Convertors.Packed.PACKED_001, Boundaries.GLIDE_TYPES),
-    PORTAMENTO_TYPE(null, null, null, Boundaries.PORTAMENTO_TYPE),
-    PORTAMENTO_MODE(null, null, null, Boundaries.PORTAMENTO_MODE),
+    PORTAMENTO_TYPE(Convertors.Packed.PACKED_000, Boundaries.PORTAMENTO_TYPE),
+    PORTAMENTO_MODE(Convertors.Packed.PACKED_000, Boundaries.PORTAMENTO_MODE),
     PORTAMENTO_TIME(null, 5, null),
     UNISON_VOICES(Convertors.Packed.PACKED_100, Boundaries.UNISON_VOICES),
     CONSTANT_GATE(Convertors.Packed.PACKED_100, Boundaries.BOOLEAN),
@@ -49,6 +49,7 @@ enum Mappings {
     ////
     // Oscillators - individual
     // 3 identical oscillators are available:
+    ////
     OSC1_WAVEFORM(Convertors.Packed.PACKED_000, Boundaries.OSC_WAVEFORMS),
     OSC1_OCTAVE(Convertors.Packed.PACKED_000, Boundaries.OSC_OCTAVES),
     OSC1_SEMITONE(Convertors.Packed.PACKED_000, Boundaries.OSC_SEMITONES),
@@ -59,7 +60,7 @@ enum Mappings {
     OSC1_SYNC_FORMANT_WIDTH(null, null, 75),
     OSC1_MODWHEEL_LFO1_AMOUNT(null, null, 69, Boundaries.CENTRIC_127),
     OSC1_AFTERTOUCH_LFO1_AMOUNT(null, null, 72, Boundaries.CENTRIC_127),
-    ////
+    //// osc1-mod matrix
     OSC1_MIX(null, 28, null),
     OSC1_MIX_LFO1_DEPTH(null, null, 14, Boundaries.CENTRIC_127),
     OSC1_MIX_LFO2_DEPTH(null, null, 15, Boundaries.CENTRIC_127),
@@ -101,7 +102,7 @@ enum Mappings {
     OSC2_SYNC_FORMANT_WIDTH(null, null, 76),
     OSC2_MODWHEEL_LFO1_AMOUNT(null, null, 70, Boundaries.CENTRIC_127),
     OSC2_AFTERTOUCH_LFO1_AMOUNT(null, null, 73, Boundaries.CENTRIC_127),
-    //
+    //// osc2-mod matrix
     OSC2_MIX(null, 29, null),
     OSC2_MIX_LFO1_DEPTH(null, null, 30, Boundaries.CENTRIC_127),
     OSC2_MIX_LFO2_DEPTH(null, null, 31, Boundaries.CENTRIC_127),
@@ -143,7 +144,7 @@ enum Mappings {
     OSC3_SYNC_FORMANT_WIDTH(null, null, 77),
     OSC3_MODWHEEL_LFO1_AMOUNT(null, null, 71, Boundaries.CENTRIC_127),
     OSC3_AFTERTOUCH_LFO1_AMOUNT(null, null, 74, Boundaries.CENTRIC_127),
-    //
+    //// osc3-mod matrix
     OSC3_MIX(null, 33, null),
     OSC3_MIX_LFO1_DEPTH(null, null, 46, Boundaries.CENTRIC_127),
     OSC3_MIX_LFO2_DEPTH(null, null, 47, Boundaries.CENTRIC_127),
@@ -175,20 +176,23 @@ enum Mappings {
     OSC3_SOFTEN_ENV3_DEPTH(null, null, 41, Boundaries.CENTRIC_127),
     OSC3_SOFTEN_WHEEL_DEPTH(null, null, 44, Boundaries.CENTRIC_127),
 
+    //// xmod1-mod matrix
     XMOD1_MIX(null, 31, null),
     XMOD1_MIX_LFO1_DEPTH(null, null, 52, Boundaries.CENTRIC_127),
     XMOD1_MIX_LFO2_DEPTH(null, null, 53, Boundaries.CENTRIC_127),
     XMOD1_MIX_ENV2_DEPTH(null, null, 50, Boundaries.CENTRIC_127),
     XMOD1_MIX_ENV3_DEPTH(null, null, 51, Boundaries.CENTRIC_127),
     XMOD1_MIX_WHEEL_DEPTH(null, null, 54, Boundaries.CENTRIC_127),
-    //
+
+    //// xmod2-mod matrix
     XMOD2_MIX(null, 4, null),
     XMOD2_MIX_LFO1_DEPTH(null, null, 57, Boundaries.CENTRIC_127),
     XMOD2_MIX_LFO2_DEPTH(null, null, 58, Boundaries.CENTRIC_127),
     XMOD2_MIX_ENV2_DEPTH(null, null, 55, Boundaries.CENTRIC_127),
     XMOD2_MIX_ENV3_DEPTH(null, null, 56, Boundaries.CENTRIC_127),
     XMOD2_MIX_WHEEL_DEPTH(null, null, 59, Boundaries.CENTRIC_127),
-    //
+
+    //// noise-mod matrix
     NOISE_MIX(null, 30, null),
     NOISE_MIX_LFO1_DEPTH(null, null, 66, Boundaries.CENTRIC_127),
     NOISE_MIX_LFO2_DEPTH(null, null, 67, Boundaries.CENTRIC_127),
@@ -204,34 +208,38 @@ enum Mappings {
     NOISE_SOFTEN_WHEEL_DEPTH(null, null, 64, Boundaries.CENTRIC_127),
     ////
     // Envelopes
-    // - envelope1 (ADSR): amplitude + wheel + aftertouch
-    // - envelope2 (ADSR): + delay
-    // - envelope3 (ADSR): + delay
+    // - envelope1 (ADSR): amplitude, including wheel & aftertouch
+    // - envelope2 (ADSR): including delay
+    // - envelope3 (ADSR): including delay
     ////
     ENVELOPE1_ATTACK(null, 108, null),
     ENVELOPE1_DECAY(null, 109, null),
     ENVELOPE1_SUSTAIN(null, 110, null),
     ENVELOPE1_RELEASE(null, 111, null),
+    ENVELOPE1_TRIGGER(Convertors.Packed.PACKED_001, Boundaries.ENV_TRIGGERS),
     ENVELOPE1_VELOCITY_DEPTH(61, 112, null, Boundaries.CENTRIC_127),
+    // env1 specific
     ENVELOPE1_WHEEL(null, null, 105, Boundaries.CENTRIC_127),
     ENVELOPE1_AFTER_TOUCH(null, null, 106, Boundaries.CENTRIC_127),
-    ENVELOPE1_TRIGGER(Convertors.Packed.PACKED_001, Boundaries.ENV_TRIGGERS),
 
-    ENVELOPE2_DELAY(null, 113, null),
     ENVELOPE2_ATTACK(null, 114, null),
     ENVELOPE2_DECAY(null, 115, null),
     ENVELOPE2_SUSTAIN(null, 116, null),
     ENVELOPE2_RELEASE(null, 117, null),
-    ENVELOPE2_VELOCITY_DEPTH(null, 118, null, Boundaries.CENTRIC_127),
     ENVELOPE2_TRIGGER(Convertors.Packed.PACKED_001, Boundaries.ENV_TRIGGERS),
+    ENVELOPE2_VELOCITY_DEPTH(null, 118, null, Boundaries.CENTRIC_127),
+    // env2/3 specific
+    ENVELOPE2_DELAY(null, 113, null),
 
-    ENVELOPE3_DELAY(null, 74, null),
     ENVELOPE3_ATTACK(null, 75, null),
     ENVELOPE3_DECAY(null, 76, null),
     ENVELOPE3_SUSTAIN(null, 77, null),
     ENVELOPE3_RELEASE(null, 78, null),
-    ENVELOPE3_VELOCITY_DEPTH(null, 79, null, Boundaries.CENTRIC_127),
     ENVELOPE3_TRIGGER(Convertors.Packed.PACKED_001, Boundaries.ENV_TRIGGERS),
+    ENVELOPE3_VELOCITY_DEPTH(null, 79, null, Boundaries.CENTRIC_127),
+    // env2/3 specific
+    ENVELOPE3_DELAY(null, 74, null),
+
     ////
     // LFOs
     // - 2 identical LFOs are available
@@ -276,9 +284,7 @@ enum Mappings {
     FILTER_AFTERTOUCH_LFO2_RESONANCE_AMOUNT(null, null, 92, Boundaries.CENTRIC_127),
     FILTER_AFTERTOUCH_FREQUENCY_AMOUNT(null, null, 93, Boundaries.CENTRIC_127),
     FILTER_AFTERTOUCH_RESONANCE_AMOUNT(null, null, 94, Boundaries.CENTRIC_127),
-
-    // modulation
-    //
+    //// filter-mod matrix
     FILTER_FREQUENCY_LFO1_DEPTH(null, 60, null, Boundaries.CENTRIC_127),
     FILTER_FREQUENCY_LFO2_DEPTH(null, 35, null, Boundaries.CENTRIC_127),
     FILTER_FREQUENCY_ENV2_DEPTH(null, 107, null, Boundaries.CENTRIC_127),
@@ -294,17 +300,15 @@ enum Mappings {
     // ARP
     ////
     ARP_ON_OFF(Convertors.Packed.PACKED_001, Boundaries.BOOLEAN),
-    // special case: 0|127 used as boolean (for checkbox) : use diff boundary for mappings vs boundaries
+    // special case: 0|127 values used as boolean (for checkbox) :
+    // hence hack: use different boundary for mappings vs boundaries
     ARP_LATCH(new Convertors.ARP_LATCH("arp_latch", null, 65, null, Boundaries.NONE), Boundaries.BOOLEAN),
     ARP_KEY_SYNC(Convertors.Packed.PACKED_001, Boundaries.BOOLEAN),
     ARP_CONSTANT_PITCH(Convertors.Packed.PACKED_001, Boundaries.BOOLEAN),
     ARP_REALTIME_TRANSPOSE(Convertors.Packed.PACKED_001, Boundaries.BOOLEAN),
     ARP_MUTE(Convertors.Packed.PACKED_001, Boundaries.BOOLEAN),
-//    ARP_RATE_NON_SYNC(84, 9, null, Boundaries.ARP_NON_SYNC_RATES),
-//    ARP_RATE_SYNC(85, 87, null, Boundaries.ARP_SYNC_RATES),
-//    ARP_GATE_TIME(86, 88, null),
     ARP_PATTERN(null, 3, null),
-    ARP_SPEED(null, 9, null),
+    ARP_SPEED(null, 9, null, Boundaries.ARP_NON_SYNC_RATES),
     ARP_SPEED_SYNC(Convertors.Packed.PACKED_110, Boundaries.ARP_SYNC_RATES),
     ARP_PATTERN_BANK(Convertors.Packed.PACKED_001, Boundaries.ARP_PATTERN_BANK),
     ARP_OCTAVES(Convertors.Packed.PACKED_109, Boundaries.ARP_OCTAVES),
@@ -322,7 +326,8 @@ enum Mappings {
     EFFECTS_CONFIG(Convertors.Packed.PACKED_113, Boundaries.EFFECTS_CONFIG),
     EFFECTS_CONFIG_MORPH(null, 8, null, Boundaries.NONE),
     EFFECTS_INPUT(Convertors.Packed.PACKED_113, Boundaries.EFFECTS_INPUT),
-    // TDOD NRPN 97 effects drylevel ?
+    // effects drylevel (found in PAN menu.. ?)
+    EFFECTS_DRY_LEVEL(null, null, 97, Boundaries.NONE),
     ////
     // Effects - equalizer
     ////
@@ -340,7 +345,7 @@ enum Mappings {
     DELAY_FEEDBACK(null, 102, null),
     DELAY_HF_DAMP(null, 103, null),
     DELAY_STEREO_WIDTH(null, null, 101),
-    // TODO - damned, yet also partly in PACKED_100 ?!?!
+    // TODO - also partly in PACKED_100 ?!?! guess this won't just work out of the box
     DELAY_RATIO(Convertors.Packed.PACKED_109, Boundaries.DELAY_RATIO),
     ////
     // Effects - chorus/flanger
@@ -352,59 +357,45 @@ enum Mappings {
     CHORUS_RATE_NON_SYNC(null, 87, null),
     CHORUS_MOD_DEPTH(null, 88, null, Boundaries.CENTRIC_127),
     CHORUS_FEEDBACK(null, 89, null),
-    //    CHORUS_MOD_CENTRE_POINT(116, null, null, Boundaries.CENTRIC_127),
-//    CHORUS_GLOBAL_SYNC(Convertors.Packed.PACKED9, Boundaries.CHORUS_GLOBAL_SYNC),
-//    ////
-//    // Effects - reverb
-//    ////
+    ////
+    // Effects - reverb
+    ////
     REVERB_SEND_LEVEL(null, 91, null),
 //    REVERB_TYPE(Convertors.Packed.PACKED8, Boundaries.REVERB_TYPES),
     REVERB_SEND_MODWHEEL(null, 84, null, Boundaries.CENTRIC_127),
     REVERB_DECAY(null, 95, null),
     // TODO - CHECK !spec'ed as CC 96 !?
 //    REVERB_HF_DAMP(null, null, 96),
-//    ////
-//    // Effects - distortion
-//    ////
+    ////
+    // Effects - distortion
+    ////
     DISTORTION_LEVEL(null, 90, null),
     DISTORTION_MODWHEEL(null, 58, null, Boundaries.CENTRIC_127),
-//    DISTORTION_COMPENSATION(99, 17, null),
-//    ////
-//    // Effects - vocoder
-//    ////
+    ////
+    // Effects - vocoder
+    ////
     VOCODER_BALANCE(null, null, 102),
 //    VOCODER_STEREO_WIDTH(90, null, null),
 //    VOCODER_SIBILANCE_TYPE(Convertors.Packed.PACKED10, Boundaries.SIBILANCE_TYPES),
 //    VOCODER_SIBILANCE_LEVEL(91, null, null),
-//    ////
-//    // Effects - panning
-//    ////
-    // TODO - UI (L/R)
+    ////
+    // Effects - panning
+    ////
     PANNING_POSITION(null, 10, null, Boundaries.CENTRIC_127),
     PANNING_EFFECTS(Convertors.Packed.PACKED_100, Boundaries.BOOLEAN),
     PANNING_DEPTH(null, null, 99),
     PANNING_RATE_NON_SYNC(null, null, 98),
 //    PANNING_RATE_SYNC(119, null, null, Boundaries.SYNC_RATES),
 //    PANNING_GLOBAL_SYNC(Convertors.Packed.PACKED9, Boundaries.PANNING_GLOBAL_SYNC),
-//    ////
-//    // various
-//    ////
+    ////
+    // various
+    ////
 //    EXT_AUDIO_TRIGGER(Convertors.Packed.PACKED10, Boundaries.BOOLEAN),
 //    EXT_AUDIO_TO_FX(Convertors.Packed.PACKED10, Boundaries.BOOLEAN),
-//    // program volume - stored in patch
-//    // NOTE: some ROM patches seem to contain invalid value (= 0)
-//    PROGRAM_VOLUME(125, 119, null, Boundaries.CENTRIC_24),
-//    // next 4 are not (yet) used, should/could become used in (future) devicePanel
-////    OSC_SELECT(Convertors.Packed.PACKED11, Boundaries.OSC_SELECT),
-//    MIXER_SELECT(Convertors.Packed.PACKED11, Boundaries.MIXER_SELECT),
-//    PWM_SOURCE(Convertors.Packed.PACKED11, Boundaries.PWM_SOURCE),
-//    LFO_SELECT(Convertors.Packed.PACKED11, Boundaries.LFO_SELECT),
 //
-//    ////
-//    // known, yet non-used: listed here for completeness & to avoid noisy logs
-//    ////
-//    // CC7: Device volume (non-patch related; not stored within patch, only CC-evented)
-//    DEVICE_VOLUME(null, 7, null),
+    ////
+    // known, yet non-used: listed here for completeness & to avoid noisy logs
+    ////
     BANK_SELECT(null, 32, null);
 
     ////
@@ -413,20 +404,13 @@ enum Mappings {
     // CC0 -> (Bank) Ignored / not transmitted
     // CC1 -> modwheel (receive only)
     // CC2 -> breath control (receive only)
-    // CC4 -> Not Applicable
     // CC6 -> used for NRPN value
-    // CC11 -> Not Applicable
-    // CC32 -> bank select
-    // CC38, 39 -> Not Applicable
-    // CC66 -> Not Applicable
-    // CC86 -> Not Applicable
-    // CC90 -> Not Applicable according to doc, however used for distortion level in practice
-    // CC96, 97 -> Not Applicable
-    // CC98 NRPN number
-    // CC99, CC100, CC101-> Not Applicable
-    // CC113 -> Not Applicable
-
-    // NOTE: looks like (non-documented) Packed11convertor is coming in via NRPN 26
+    // CC32 -> bank select LSB
+    // CC98 NRPN LSB
+    // CC99 NRPN MSB
+    // CC100 RPN LSB -> Not received in practice (RPN MSB/LSB) -> mail sent
+    // CC101 RPN MSB -> Not received in practice (RPN MSB/LSB) -> mail sent
+    // [CC120,XX127] -> To be checked
 
     // key as used in the Edisyn Synth Model, deduced from enum name, made compliant with Edisyn naming conventions
     private final String key;

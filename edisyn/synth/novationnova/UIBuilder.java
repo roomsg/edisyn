@@ -57,6 +57,8 @@ class UIBuilder {
 
         hbox = new HBox();
         hbox.add(createLFO(1, Style.COLOR_B()));
+        vbox.add(hbox);
+        hbox = new HBox();
         hbox.addLast(createLFO(2, Style.COLOR_B()));
         vbox.add(hbox);
 
@@ -257,15 +259,14 @@ class UIBuilder {
 
     private JComponent createFilter(Color color) {
         Category category = new Category(synth, "Filter", color);
-        HBox mainhbox = new HBox();
+        VBox mainvbox = new VBox();
 
+        HBox hbox = new HBox();
         VBox vbox1 = new VBox();
         vbox1.add(createChooser("Type", FILTER_TYPE));
         vbox1.add(createChooser("Slope", FILTER_SLOPE));
-        mainhbox.add(vbox1);
+        hbox.add(vbox1);
 
-        VBox vbox2 = new VBox();
-        HBox hbox = new HBox();
         hbox.add(createLabelledDial("Frequency", FILTER_FREQUENCY, color));
         hbox.add(createLabelledDial("Resonance", FILTER_RESONANCE, color));
         hbox.add(createLabelledDial("Overdrive", FILTER_OVERDRIVE, color));
@@ -278,17 +279,18 @@ class UIBuilder {
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2", "Resonance", "Amount"), FILTER_AFTERTOUCH_LFO2_RESONANCE_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Frequency", "Amount"), FILTER_AFTERTOUCH_FREQUENCY_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Resonance", "Amount"), FILTER_AFTERTOUCH_RESONANCE_AMOUNT, color));
-        vbox2.add(hbox);
 
-        mainhbox.add(vbox2);
+        mainvbox.add(hbox);
 
+        hbox = new HBox();
         Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
         modulationDestinationMappings.put("Frequency", FILTER_FREQUENCY);
         modulationDestinationMappings.put("Resonance", FILTER_RESONANCE);
         JComponent modulationPanel = createModulationPanel(MODULATION_FILTER, modulationDestinationMappings, color);
-        mainhbox.add(modulationPanel);
+        hbox.add(modulationPanel);
+        mainvbox.add(hbox);
 
-        category.add(mainhbox, BorderLayout.CENTER);
+        category.add(mainvbox, BorderLayout.CENTER);
         return category;
         }
 
@@ -302,9 +304,19 @@ class UIBuilder {
         vbox.add(createChooser("Env Trigger", Mappings.find("ENVELOPE%d_TRIGGER", envelope)));
         hbox.add(vbox);
 
+        // (generic) ADSR controls
+        Mappings mappingsAttack = Mappings.find("ENVELOPE%d_ATTACK", envelope);
+        hbox.add(createLabelledDial("Attack", mappingsAttack, color));
+        Mappings mappingsDecay = Mappings.find("ENVELOPE%d_DECAY", envelope);
+        hbox.add(createLabelledDial("Decay", mappingsDecay, color));
+        Mappings mappingsSustain = Mappings.find("ENVELOPE%d_SUSTAIN", envelope);
+        hbox.add(createLabelledDial("Sustain", mappingsSustain, color));
+        Mappings mappingsRelease = Mappings.find("ENVELOPE%d_RELEASE", envelope);
+        hbox.add(createLabelledDial("Release", mappingsRelease, color));
+
+        // other env controls
         Mappings velocityDepth = Mappings.find("ENVELOPE%d_VELOCITY_DEPTH", envelope);
         hbox.add(createLabelledDial("Velocity Depth", velocityDepth, color));
-
         if (envelope == 1) {
             Mappings mappingsWheel = Mappings.find("ENVELOPE%d_WHEEL", envelope);
             hbox.add(createLabelledDial("Mod Wheel", mappingsWheel, color));
@@ -317,19 +329,7 @@ class UIBuilder {
             hbox.add(Strut.makeStrut(delay));
         }
 
-        Mappings mappingsAttack = Mappings.find("ENVELOPE%d_ATTACK", envelope);
-        hbox.add(createLabelledDial("Attack", mappingsAttack, color));
-
-        Mappings mappingsDecay = Mappings.find("ENVELOPE%d_DECAY", envelope);
-        hbox.add(createLabelledDial("Decay", mappingsDecay, color));
-
-        Mappings mappingsSustain = Mappings.find("ENVELOPE%d_SUSTAIN", envelope);
-        hbox.add(createLabelledDial("Sustain", mappingsSustain, color));
-
-        Mappings mappingsRelease = Mappings.find("ENVELOPE%d_RELEASE", envelope);
-        hbox.add(createLabelledDial("Release", mappingsRelease, color));
-
-        // ADSR
+        // ADSR display
         JComponent comp = new EnvelopeDisplay(synth, Color.red,
             new String[]{null, mappingsAttack.getKey(), mappingsDecay.getKey(), null, mappingsRelease.getKey()},
             new String[]{null, null, mappingsSustain.getKey(), mappingsSustain.getKey(), null},
@@ -383,13 +383,13 @@ class UIBuilder {
         vbox.add(createCheckBox("Key Reset", ARP_KEY_SYNC, true));
         vbox.add(createCheckBox("Constant Pitch", ARP_CONSTANT_PITCH));
         vbox.add(createCheckBox("Realtime Transpose", ARP_REALTIME_TRANSPOSE, true));
-        vbox.add(createCheckBox("Output Ranging", ARP_OUTPUT_RANGING));
+        vbox.add(createCheckBox("Output Ranging", ARP_OUTPUT_RANGING, true));
         hbox.add(vbox);
 
         vbox = new VBox();
         vbox.add(createChooser("Velocity", ARP_VELOCITY));
         vbox.add(createChooser("Edit Gate", ARP_EDIT_GATE));
-        vbox.add(createChooser("Output", ARP_OUTPUT));
+        vbox.add(createChooser("Note Destination", ARP_OUTPUT));
         hbox.add(vbox);
 
         vbox = new VBox();
@@ -400,11 +400,11 @@ class UIBuilder {
 
         hbox.add(createLabelledDial("Pattern Bank", ARP_PATTERN_BANK, color));
         hbox.add(createLabelledDial("Pattern", ARP_PATTERN, color));
-        // TODO - enable/disable
-        hbox.add(createLabelledDial("Speed", ARP_SPEED, color));
-        hbox.add(createLabelledDial("Speed Sync", ARP_SPEED_SYNC, color));
         hbox.add(createLabelledDial("Octaves", ARP_OCTAVES, color));
         hbox.add(createLabelledDial("Gate Time", ARP_GATE_TIME, color));
+        // TODO - enable/disable ?
+        hbox.add(createLabelledDial(Arrays.asList("Rate", "(BPM)"), ARP_SPEED, color));
+        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), ARP_SPEED_SYNC, color));
 
         category.add(hbox);
         return category;
@@ -418,6 +418,7 @@ class UIBuilder {
         vbox.add(createChooser("Pass to Effects", EFFECTS_INPUT));
         hbox.add(vbox);
         hbox.add(createLabelledDial(Arrays.asList("Config", "Morph"), EFFECTS_CONFIG_MORPH, color));
+        hbox.add(createLabelledDial(Arrays.asList("Dry", "Level"), EFFECTS_DRY_LEVEL, color));
         category.add(hbox);
         return category;
     }
@@ -508,25 +509,23 @@ class UIBuilder {
         return category;
         }
 
+    // TODO - still missing:
+    // - pan type
+    // - dry level
+    //
     private JComponent createPan(Color color) {
         Category category = new Category(synth, "Panning", color);
 
         HBox hbox = new HBox();
 
         VBox vbox = new VBox();
-        vbox.add(createCheckBox("Effects", PANNING_EFFECTS));
+        vbox.add(createCheckBox("Enable", PANNING_EFFECTS));
         hbox.add(vbox);
 
-        // TODO - check labels
         hbox.add(createLabelledDial("Position", PANNING_POSITION, color));
-//
-//        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Sync)"), PANNING_RATE_SYNC, color));
-        Component compNonSync = hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), PANNING_RATE_NON_SYNC, color));
-//        // disable non-sync component when sync is in control: value != 0 (N/A)
-//        synth.getModel().register(PANNING_RATE_SYNC.getKey(), (key, model) -> compNonSync.setEnabled(model.get(key) == 0));
-//
+        hbox.add(createLabelledDial(Arrays.asList("Rate", "(Non-Sync)"), PANNING_RATE_NON_SYNC, color));
         hbox.add(createLabelledDial("Depth", PANNING_DEPTH, color));
-//
+
         category.add(hbox);
         return category;
         }

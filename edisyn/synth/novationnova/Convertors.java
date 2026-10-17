@@ -147,12 +147,39 @@ class Convertors {
                 else if (value >= 126 && value < 128)
                     model.set(LFO2_DELAY_TRIGGER.getKey(), value - 126);
                 else
-                    System.out.println("#00?" + value);
+                    System.out.println("#000?" + value);
                 }
 
             @Override
-                public int toSynth(Model model) {
-                // TODO
+                public int toSynth(Model model, String key) {
+                if (key.equals(OSC1_WAVEFORM.getKey())) {
+                    return model.get(key);
+                } else if (key.equals(OSC2_WAVEFORM.getKey())) {
+                    return model.get(key) + 10;
+                } else if (key.equals(OSC3_WAVEFORM.getKey())) {
+                    return model.get(key) + 20;
+                } else if (key.equals(OSC1_OCTAVE.getKey())) {
+                    return model.get(key) + 30;
+                } else if (key.equals(OSC2_OCTAVE.getKey())) {
+                    return model.get(key) + 35;
+                } else if (key.equals(OSC3_OCTAVE.getKey())) {
+                    return model.get(key) + 40;
+                } else if (key.equals(OSC1_SEMITONE.getKey())) {
+                    return model.get(key) + 45;
+                } else if (key.equals(OSC2_SEMITONE.getKey())) {
+                    return model.get(key) + 70;
+                } else if (key.equals(OSC3_SEMITONE.getKey())) {
+                    return model.get(key) + 95;
+                } else if (key.equals(PORTAMENTO_TYPE.getKey())) {
+                    return model.get(key) + 120;
+                } else if (key.equals(PORTAMENTO_MODE.getKey())) {
+                    return model.get(key) + 122;
+                } else if (key.equals(LFO1_DELAY_TRIGGER.getKey())) {
+                    return model.get(key) + 124;
+                } else if (key.equals(LFO2_DELAY_TRIGGER.getKey())) {
+                    return model.get(key) + 126;
+                } else
+                    System.out.println("#000?" + key);
                 return 0;
                 }
             },
@@ -178,10 +205,9 @@ class Convertors {
                     model.set(LFO2_RANGE.getKey(), value - 31);
                 else if (value >= 34 && value < 42) {
                     int val = value - 34;
-                    byte b = (byte) ((val & 0x7) ^ 0x7);
-                    model.set(ENVELOPE3_TRIGGER.getKey(), 0x1 & (b));
-                    model.set(ENVELOPE2_TRIGGER.getKey(), 0x1 & (b >>> 1));
-                    model.set(ENVELOPE1_TRIGGER.getKey(), 0x1 & (b >>> 2));
+                    model.set(ENVELOPE3_TRIGGER.getKey(), 0x1 & (val));
+                    model.set(ENVELOPE2_TRIGGER.getKey(), 0x1 & (val >>> 1));
+                    model.set(ENVELOPE1_TRIGGER.getKey(), 0x1 & (val >>> 2));
                 }
                 else if (value >= 42 && value < 52)
                     model.set(GLIDE_TYPE.getKey(), value - 42);
@@ -211,14 +237,64 @@ class Convertors {
                     model.set(ARP_FILL_IN.getKey(), value - 122);
                 else
                     // TODO
-                    System.out.println("#01?" + value);
+                    System.out.println("#001?" + value);
             }
 
             @Override
-            public int toSynth(Model model) {
-                // TODO
+            public int toSynth(Model model, String key) {
+                if (key.equals(FILTER_SLOPE.getKey())) {
+                    return model.get(key);
+                } else if (key.equals(FILTER_TYPE.getKey())) {
+                    return model.get(key) + 3;
+                } else if (key.equals(LFO1_WAVEFORM.getKey())) {
+                    return model.get(key) + 16;
+                } else if (key.equals(LFO2_WAVEFORM.getKey())) {
+                    return model.get(key) + 20;
+                } else if (key.equals(LFO1_TRIGGER.getKey())) {
+                    return model.get(key) + 24;
+                } else if (key.equals(LFO2_TRIGGER.getKey())) {
+                    return model.get(key) + 26;
+                } else if (key.equals(LFO1_RANGE.getKey())) {
+                    return model.get(key) + 28;
+                } else if (key.equals(LFO2_RANGE.getKey())) {
+                    return model.get(key) + 31;
+                } else if (key.equals(ENVELOPE1_TRIGGER.getKey())
+                        || key.equals(ENVELOPE2_TRIGGER.getKey())
+                        || key.equals(ENVELOPE3_TRIGGER.getKey())
+                ) {
+                    int aggregatedValue =
+                            (model.get(ENVELOPE1_TRIGGER.getKey()) << 2)
+                            | (model.get(ENVELOPE2_TRIGGER.getKey()) << 1)
+                            | (model.get(ENVELOPE3_TRIGGER.getKey()));
+                    return aggregatedValue + 34;
+                } else if (key.equals(GLIDE_TYPE.getKey())) {
+                    return model.get(key) + 42;
+                } else if (key.equals(ARP_CONSTANT_PITCH.getKey())) {
+                    return model.get(key) + 70;
+                } else if (key.equals(ARP_ON_OFF.getKey())) {
+                    return model.get(key) + 72;
+                } else if (key.equals(ARP_KEY_SYNC.getKey())) {
+                    return model.get(key) + 74;
+                } else if (key.equals(ARP_PATTERN_BANK.getKey())) {
+                    return model.get(key) + 76;
+                } else if (key.equals(ARP_LATCH_TYPE.getKey())) {
+                    return model.get(key) + 79;
+                } else if (key.equals(ARP_QUANTIZE.getKey())) {
+                    return model.get(key) + 81;
+                } else if (key.equals(ARP_VELOCITY.getKey())) {
+                    return model.get(key) + 86;
+                } else if (key.equals(ARP_MUTE.getKey())) {
+                    return model.get(key) + 90;
+                } else if (key.equals(ARP_REALTIME_TRANSPOSE.getKey())) {
+                    return model.get(key) + 92;
+                } else if (key.equals(ARP_OUTPUT.getKey())) {
+                    return model.get(key) + 102;
+                } else if (key.equals(ARP_FILL_IN.getKey())) {
+                    return model.get(key) + 122;
+                } else
+                    System.out.println("#001?" + key);
                 return 0;
-                }
+            }
         },
         PACKED_084(null, null, 84) {
             @Override
@@ -236,12 +312,23 @@ class Convertors {
                     model.set(POLYPHONY_MODE.getKey(), value - 86);
                 else
                     // TODO
-                    System.out.println("#84?" + value);
+                    System.out.println("#084?" + value);
             }
 
             @Override
-            public int toSynth (Model model){
-                // TODO - Oh Dear, FW work I guess...
+            public int toSynth (Model model, String key){
+                if (key.equals(OSC1_BENDWHEEL_AMOUNT.getKey())) {
+                    return model.get(key);
+                } else if (key.equals(OSC2_BENDWHEEL_AMOUNT.getKey())) {
+                    return model.get(key) + 25;
+                } else if (key.equals(OSC3_BENDWHEEL_AMOUNT.getKey())) {
+                    return model.get(key) + 50;
+                } else if (key.equals(OSC_MODE.getKey())) {
+                    return model.get(key) + 84;
+                } else if (key.equals(POLYPHONY_MODE.getKey())) {
+                    return model.get(key) + 86;
+                }
+                    System.out.println("#084?" + key);
                 return 0;
             }
         },
@@ -268,7 +355,7 @@ class Convertors {
                 else if (value >= 102 && value < 110)
                     model.set(FILTER_SPECIAL_WIDTH.getKey(), value - 102);
                 else if (value >= 110 && value < 112)
-                    // Delay Ration is spread over 2 packed NRPNS ?!?!
+                    // Delay Ratio is spread over 2 packed NRPNS ?!?!
                     model.set(DELAY_RATIO.getKey(), value - 110 + 11);
                 else
                     // TODO
@@ -276,8 +363,26 @@ class Convertors {
             }
 
             @Override
-            public int toSynth (Model model){
-                // TODO - Oh Dear, FW work I guess...
+            public int toSynth (Model model, String key){
+                if (key.equals(DELAY_TIME_SYNC.getKey())) {
+                    return model.get(key);
+                } else if (key.equals(CONSTANT_GATE.getKey())) {
+                    return model.get(key) + 79;
+                    // TODO - verify/fix next (on/off/voices)
+                } else if (key.equals(UNISON_VOICES.getKey())) {
+                    return model.get(key) + 83;
+                } else if (key.equals(DCO_VCO_MODE.getKey())) {
+                    return model.get(key) + 92;
+                } else if (key.equals(PANNING_EFFECTS.getKey())) {
+                    return model.get(key) + 100;
+                } else if (key.equals(FILTER_SPECIAL_WIDTH.getKey())) {
+                    return model.get(key) + 102;
+                } else if (key.equals(DELAY_RATIO.getKey())) {
+                    // TODO - fix
+                    // part2 of delay ratio, currently ignored
+                    return model.get(key) -11 + 110;
+                }
+                System.out.println("#100?" + key);
                 return 0;
             }
         },
@@ -299,8 +404,15 @@ class Convertors {
             }
 
             @Override
-            public int toSynth (Model model){
-                // TODO - Oh Dear, FW work I guess...
+            public int toSynth (Model model, String key) {
+                if (key.equals(ARP_OCTAVES.getKey())) {
+                    return model.get(key) + 1;
+                } else if (key.equals(ARP_GATE_TIME.getKey())) {
+                    return model.get(key) + 5;
+                } else if (key.equals(DELAY_RATIO.getKey())) {
+                    return model.get(key) + 96;
+                }
+                System.out.println("#109?" + key);
                 return 0;
             }
         },
@@ -322,8 +434,17 @@ class Convertors {
             }
 
             @Override
-            public int toSynth (Model model){
-                // TODO - Oh Dear, FW work I guess...
+            public int toSynth (Model model, String key){
+                if (key.equals(ARP_SPEED_SYNC.getKey())) {
+                    return model.get(key);
+                } else if (key.equals(LFO1_SPEED_SYNC.getKey())) {
+                    return model.get(key) + 40;
+                } else if (key.equals(ARP_OUTPUT_RANGING.getKey())) {
+                    return model.get(key) + 78;
+                } else if (key.equals(LFO2_SPEED_SYNC.getKey())) {
+                    return model.get(key) + 80;
+                }
+                System.out.println("#110?" + key);
                 return 0;
             }
         },
@@ -341,8 +462,14 @@ class Convertors {
             }
 
             @Override
-            public int toSynth (Model model){
-                // TODO - Oh Dear, FW work I guess...
+            public int toSynth (Model model, String key){
+                if (key.equals(EFFECTS_CONFIG.getKey())) {
+                    return model.get(key) + 36;
+                } else if (key.equals(EFFECTS_INPUT.getKey())) {
+                    return model.get(key) + 71;
+                }
+                // TODO
+                System.out.println("#113?" + key);
                 return 0;
             }
         };
@@ -377,7 +504,7 @@ class Convertors {
             }
         }
 
-        // one special case: boolean modelled as 0/127
+        // one special case: boolean modeled as 0|127
         static class ARP_LATCH extends Convertor.Straight {
 
             ARP_LATCH(String key, Integer byteIndex, Integer cc, Integer nrpn, Boundary boundary) {
@@ -390,10 +517,9 @@ class Convertors {
             }
 
             @Override
-            public int toSynth(Model model) {
+            public int toSynth(Model model, String key) {
                 int modelValue = model.get(ARP_LATCH.getKey());
                 return modelValue == -1 ? 0 : modelValue * 127;
             }
         }
-
 }

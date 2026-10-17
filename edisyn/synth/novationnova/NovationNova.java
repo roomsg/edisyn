@@ -19,7 +19,7 @@ import static edisyn.synth.novationnova.SysexMessage.Type.*;
 
 /**
  * This class is the main EntryPoint into Edisyn
- * TODO - currently mainly a copy from astation, needs to be lined up will with nova
+ * TODO - currently mainly a copy from astation, needs to be lined up still with nova
  */
 public class NovationNova extends Synth {
     private static final String[] BANKS = Boundaries.BANKS.getValues();
@@ -182,27 +182,36 @@ public class NovationNova extends Synth {
             .withVersionIncrement((byte) synthModel.get(KEY_VERSION_INCREMENT));
         for (int byteIndex = 0; byteIndex < type.getPayloadSize(); ++byteIndex) {
             Optional<Convertor> convertor = Convertors.getByIndex(byteIndex);
+            // TODO - revisit for nova
+            /*
             if (convertor.isPresent()) {
                 int value = convertor.get().toSynth(synthModel);
                 builder.withPayload(byteIndex, (byte) value);
                 }
+            */
             }
         byte[] bytes = builder.build().getBytes();
         // System.out.println(StringUtility.toHex(bytes));
         return bytes;
         }
 
+//    @Override
+//    public Object[] emitAll(String key, int status)
+//    {
+//        return emitAll(key);
+//    }
+//
     @Override
     public Object[] emitAll(String key) {
-        Optional<Convertor> convertor = Convertors.getByKey(key);
-        if (convertor.isPresent()) {
-            Convertor mapping = convertor.get();
-            if (mapping.getCC().isPresent()) {
-                int value = mapping.toSynth(model);
-                return buildCC(getChannelOut(), mapping.getCC().getAsInt(), value);
-                } else if (mapping.getNRPN().isPresent()) {
-                int value = mapping.toSynth(model) << 7;
-                return buildNRPN(getChannelOut(), mapping.getNRPN().getAsInt(), value);
+        Optional<Convertor> convertorOpt = Convertors.getByKey(key);
+        if (convertorOpt.isPresent()) {
+            Convertor convertor = convertorOpt.get();
+            if (convertor.getCC().isPresent()) {
+                int value = convertor.toSynth(model, key);
+                return buildCC(getChannelOut(), convertor.getCC().getAsInt(), value);
+                } else if (convertor.getNRPN().isPresent()) {
+                int value = convertor.toSynth(model, key) << 7;
+                return buildNRPN(getChannelOut(), convertor.getNRPN().getAsInt(), value);
                 }
             }
         System.err.println("Ignoring model key '" + key + "', since no convertor found");
