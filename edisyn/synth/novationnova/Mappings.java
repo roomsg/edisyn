@@ -34,6 +34,15 @@ enum Mappings {
     MODULATION_NOISE(null, null, null, Boundaries.MODULATION_DESTINATION_NOISE),
     MODULATION_FILTER(null, null, null, Boundaries.MODULATION_DESTINATION_FILTER),
     ////
+    // Some special entries, only send to global channel
+    // So: probably not stored within program
+    // So: don't expect anything on the UI for now
+    // TODO-complete:
+    //   master tune, breath sensing, arp stuff, arp user patterns,
+    //   vocoder stuff, input trim, midi clock, ...
+    ////
+    MASTER_VOLUME(null, 97, null),
+    ////
     // program/patch & oscillators - global (= applying to all oscillators)
     ////
     POLYPHONY_MODE(Convertors.Packed.PACKED_084, Boundaries.POLYPHONY_MODE),
@@ -351,21 +360,21 @@ enum Mappings {
     // Effects - chorus/flanger
     ////
     CHORUS_SEND_LEVEL(null, 93, null),
-//    CHORUS_TYPE(Convertors.Packed.PACKED8, Boundaries.CHORUS_TYPES),
+    CHORUS_TYPE(Convertors.Packed.PACKED_001, Boundaries.CHORUS_TYPES),
     CHORUS_MODWHEEL_DEPTH(null, 94, null, Boundaries.CENTRIC_127),
 //    CHORUS_RATE_SYNC(113, null, null, Boundaries.SYNC_RATES),
     CHORUS_RATE_NON_SYNC(null, 87, null),
-    CHORUS_MOD_DEPTH(null, 88, null, Boundaries.CENTRIC_127),
-    CHORUS_FEEDBACK(null, 89, null),
+    CHORUS_MOD_DEPTH(null, 88, null),
+    CHORUS_FEEDBACK(null, 89, null, Boundaries.CENTRIC_127),
     ////
     // Effects - reverb
     ////
     REVERB_SEND_LEVEL(null, 91, null),
-//    REVERB_TYPE(Convertors.Packed.PACKED8, Boundaries.REVERB_TYPES),
+    REVERB_TYPE(Convertors.Packed.PACKED_CC_100, Boundaries.REVERB_TYPES),
+    REVERB_EARLY_REFLECTION(Convertors.Packed.PACKED_CC_100, Boundaries.MAX_7),
     REVERB_SEND_MODWHEEL(null, 84, null, Boundaries.CENTRIC_127),
     REVERB_DECAY(null, 95, null),
-    // TODO - CHECK !spec'ed as CC 96 !?
-//    REVERB_HF_DAMP(null, null, 96),
+    REVERB_HF_DAMP(null, 96, null),
     ////
     // Effects - distortion
     ////
@@ -382,7 +391,8 @@ enum Mappings {
     // Effects - panning
     ////
     PANNING_POSITION(null, 10, null, Boundaries.CENTRIC_127),
-    PANNING_EFFECTS(Convertors.Packed.PACKED_100, Boundaries.BOOLEAN),
+    PANNING_EFFECT_ON_OFF(Convertors.Packed.PACKED_100, Boundaries.BOOLEAN),
+    PANNING_EFFECT_TYPE(Convertors.Packed.PACKED_001, Boundaries.PANNING_EFFECT_TYPES),
     PANNING_DEPTH(null, null, 99),
     PANNING_RATE_NON_SYNC(null, null, 98),
 //    PANNING_RATE_SYNC(119, null, null, Boundaries.SYNC_RATES),

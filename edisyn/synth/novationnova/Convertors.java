@@ -211,7 +211,11 @@ class Convertors {
                 }
                 else if (value >= 42 && value < 52)
                     model.set(GLIDE_TYPE.getKey(), value - 42);
-                // TODO
+                else if (value >= 52 && value < 55)
+                    model.set(CHORUS_TYPE.getKey(), value - 52);
+                else if (value >= 55 && value < 59)
+                    model.set(PANNING_EFFECT_TYPE.getKey(), value - 55);
+                    // TODO
                 else if (value >= 70 && value < 72)
                     model.set(ARP_CONSTANT_PITCH.getKey(), value - 70);
                 else if (value >= 72 && value < 74)
@@ -269,6 +273,10 @@ class Convertors {
                     return aggregatedValue + 34;
                 } else if (key.equals(GLIDE_TYPE.getKey())) {
                     return model.get(key) + 42;
+                } else if (key.equals(CHORUS_TYPE.getKey())) {
+                    return model.get(key) + 52;
+                } else if (key.equals(PANNING_EFFECT_TYPE.getKey())) {
+                    return model.get(key) + 55;
                 } else if (key.equals(ARP_CONSTANT_PITCH.getKey())) {
                     return model.get(key) + 70;
                 } else if (key.equals(ARP_ON_OFF.getKey())) {
@@ -351,7 +359,7 @@ class Convertors {
                 else if (value >= 92 && value < 94)
                     model.set(DCO_VCO_MODE.getKey(), value - 92); // +1 since synthetic "Off" value
                 else if (value >= 100 && value < 102)
-                    model.set(PANNING_EFFECTS.getKey(), value - 100);
+                    model.set(PANNING_EFFECT_ON_OFF.getKey(), value - 100);
                 else if (value >= 102 && value < 110)
                     model.set(FILTER_SPECIAL_WIDTH.getKey(), value - 102);
                 else if (value >= 110 && value < 112)
@@ -373,7 +381,7 @@ class Convertors {
                     return model.get(key) + 83;
                 } else if (key.equals(DCO_VCO_MODE.getKey())) {
                     return model.get(key) + 92;
-                } else if (key.equals(PANNING_EFFECTS.getKey())) {
+                } else if (key.equals(PANNING_EFFECT_ON_OFF.getKey())) {
                     return model.get(key) + 100;
                 } else if (key.equals(FILTER_SPECIAL_WIDTH.getKey())) {
                     return model.get(key) + 102;
@@ -471,6 +479,24 @@ class Convertors {
                 // TODO
                 System.out.println("#113?" + key);
                 return 0;
+            }
+        },
+        PACKED_CC_100(null, 100, null) {
+            @Override
+            public void toModel (Model model, int value){
+                // bits 0-2: early reflection level
+                int erLevel = value & 7;
+                model.set(REVERB_EARLY_REFLECTION.getKey(), erLevel);
+                // bits 3-6: reverb type
+                int reverbType = value >>> 3;
+                model.set(REVERB_TYPE.getKey(), reverbType);
+            }
+
+            @Override
+            public int toSynth (Model model, String key){
+                int erLevel = model.get(REVERB_EARLY_REFLECTION.getKey());
+                int reverbType = model.get(REVERB_TYPE.getKey());
+                return (erLevel) | (reverbType << 3);
             }
         };
 

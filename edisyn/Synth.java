@@ -2546,7 +2546,7 @@ public abstract class Synth extends JComponent implements Updatable
         return TRUE (it returns FALSE by default). */
     public boolean getRequiresNRPNLSB() { return false; }
 
-    void handleInRawCC(ShortMessage message)
+    protected void handleInRawCC(ShortMessage message)
         {
         if (getExpectsRawCCFromSynth())
             {

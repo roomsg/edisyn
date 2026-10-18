@@ -49,6 +49,7 @@ public class NovationNova extends Synth {
 
     @Override
     public String getDefaultResourceFileName() {
+        // TODO - init file to be created still
         return "NovationNova.init";
         }
 
@@ -59,6 +60,7 @@ public class NovationNova extends Synth {
 
     @Override
     public String getPatchName(Model model) {
+        // TODO - revise, code from astation
         int bank = model.get(KEY_BANK);
         int patch = model.get(KEY_PATCH_NUMBER);
         return createPatchName(bank, patch).orElse(PATCH_NAME_UNDEFINED);
@@ -66,6 +68,7 @@ public class NovationNova extends Synth {
 
     @Override
     public String getPatchLocationName(Model model) {
+        // TODO - revise, code from astation
         int bank = model.get(KEY_BANK);
         int patch = model.get(KEY_PATCH_NUMBER);
         return createPatchName(bank, patch).orElse(null);
@@ -73,6 +76,7 @@ public class NovationNova extends Synth {
 
     @Override
     public Model getNextPatchLocation(Model model) {
+        // TODO - revise, code from astation
         int bank = model.get(KEY_BANK);
         bank = Math.max(bank, 0);
         bank = Math.min(bank, 3);
@@ -87,6 +91,7 @@ public class NovationNova extends Synth {
 
     @Override
     public boolean gatherPatchInfo(String title, Model changeThis, boolean writing) {
+        // TODO - revise, code from astation
         JComboBox<String> bank = new JComboBox<>(BANKS);
         bank.setEditable(false);
         bank.setMaximumRowCount(4);
@@ -127,6 +132,7 @@ public class NovationNova extends Synth {
 
     @Override
     public void changePatch(Model tempModel) {
+        // TODO - revise, code from astation
         byte bank = (byte) tempModel.get(KEY_BANK);
         byte program = (byte) tempModel.get(KEY_PATCH_NUMBER);
         try {
@@ -142,6 +148,7 @@ public class NovationNova extends Synth {
 
     @Override
     public int parse(byte[] data, boolean fromFile) {
+        // TODO - revise, code from astation
         try {
             SysexMessage message = SysexMessage.parse(data);
             model.set(KEY_SOFTWARE_VERSION, message.getSoftwareVersion());
@@ -165,6 +172,7 @@ public class NovationNova extends Synth {
 
     @Override
     public byte[] emit(Model tempModel, boolean toWorkingMemory, boolean toFile) {
+        // TODO - revise, code from astation
         if (tempModel == null)
             tempModel = model;
         // only use tempModel for retrieval of bank & patchnumber !
@@ -195,6 +203,7 @@ public class NovationNova extends Synth {
         return bytes;
         }
 
+// TODO - check if we want/need do something with this (ref 2 param)
 //    @Override
 //    public Object[] emitAll(String key, int status)
 //    {
@@ -220,17 +229,37 @@ public class NovationNova extends Synth {
 
     @Override
     public byte[] requestCurrentDump() {
+        // TODO - revise, code from astation
         return new SysexMessage.Builder(CURRENT_PROGRAM_DUMP_REQUEST)
             .build().getBytes();
         }
 
     @Override
     public byte[] requestDump(Model tempModel) {
+        // TODO - revise, code from astation
         return new SysexMessage.Builder(PROGRAM_DUMP_REQUEST)
             .withProgramBank((byte) (1 + tempModel.get(KEY_BANK))) // 1..4 (while in model: 0..3))
             .withProgramNumber((byte) (tempModel.get(KEY_PATCH_NUMBER)))
             .build().getBytes();
         }
+
+
+    @Override
+    protected void handleInRawCC(ShortMessage message) {
+        // hack alert, CC100/CC101 used as raw CC
+        if (
+//                message.getData1() == 96 ||
+//                message.getData1() == 97 ||
+                message.getData1() == 100 ||
+                message.getData1() == 101
+        ) {
+            // System.out.println("hack-alert:" + message.getData1() + ", " + message.getData2());
+            Midi.CCData ccdata = new Midi.CCData(0, message.getData1(), message.getData2(), message.getChannel(), false);
+            handleSynthCCOrNRPN(ccdata);
+        } else {
+            super.handleInRawCC(message);
+        }
+    }
 
     @Override
     public void handleSynthCCOrNRPN(Midi.CCData data) {
@@ -285,6 +314,7 @@ public class NovationNova extends Synth {
      */
     @Override
     public int getPauseAfterWritePatch() {
+        // TODO - revise, code from astation
         // the value used as a hack
         // return 100;
         // the value for smooth processing
@@ -296,22 +326,26 @@ public class NovationNova extends Synth {
     ////
     @Override
     public String[] getBankNames() {
+        // TODO - revise, code from astation
         return BANKS;
         }
 
     @Override
     public String[] getPatchNumberNames() {
+        // TODO - revise, code from astation
         return PATCHES;
         }
 
     @Override
     public boolean getSupportsPatchWrites() {
+        // TODO - revise, code from astation
         return true;
         }
 
     @Override
     public boolean librarianTested() {
-        return true;
+        // TODO - revise, code from astation
+        return false;
         }
 
     ////
@@ -322,6 +356,7 @@ public class NovationNova extends Synth {
         }
 
     private int handleProgramDump(SysexMessage message) {
+        // TODO - revise, code from astation
         byte programBank = message.getProgramBank();    // 1..4
         byte programNumber = message.getProgramNumber();  // 0..99
         if (programBank >= 1 && programBank <= 4) {
@@ -349,6 +384,7 @@ public class NovationNova extends Synth {
         }
 
     private Model updateModel(Model modelToUpdate, int modelBank, int modelPatch) {
+        // TODO - revise, code from astation
         modelBank = validateModelBank(modelBank);
         modelPatch = validateModelPatch(modelPatch);
         modelToUpdate.set(KEY_BANK, modelBank); // 0..3 in model
@@ -359,6 +395,7 @@ public class NovationNova extends Synth {
         }
 
     private Optional<String> createPatchName(int modelBank, int modelPatch) {
+        // TODO - revise, code from astation
         modelBank = validateModelBank(modelBank);
         modelPatch = validateModelPatch(modelPatch);
         if ((modelBank == -1) || (modelPatch == -1)) {
@@ -371,6 +408,7 @@ public class NovationNova extends Synth {
     // validate bank number (in model !): 0..3 (and -1 used as sentinel)
     // note: in unit, valid bank numbers are: 1..4 !
     private int validateModelBank(int bank) {
+        // TODO - revise, code from astation
         if (bank < -1 || bank > 3) {
             // definitely a programming mistake
             throw new IllegalStateException("Invalid bank " + bank);
@@ -380,6 +418,7 @@ public class NovationNova extends Synth {
 
     // validate patch numbers (in model): 0..99 (and -1 used as sentinel)
     private int validateModelPatch(int patch) {
+        // TODO - revise, code from astation
         if (patch < -1 || patch > 99) {
             // definitely a programming mistake
             throw new IllegalStateException("Invalid patch " + patch);
@@ -392,6 +431,7 @@ public class NovationNova extends Synth {
      * Only here to satisfy the SanityCheck
      */
     private void initUnusedModelItems() {
+        // TODO - revise, code from astation
         model.setMinMax(KEY_SOFTWARE_VERSION, 0, 127);
         model.setMinMax(KEY_VERSION_INCREMENT, 0, 127);
         //

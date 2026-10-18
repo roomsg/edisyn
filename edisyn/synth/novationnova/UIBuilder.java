@@ -79,13 +79,13 @@ class UIBuilder {
         vbox.add(hbox);
         hbox = new HBox();
         hbox.add(createReverb(Style.COLOR_A()));
-        hbox.add(createChorus(Style.COLOR_B()));
-        hbox.addLast(createDistortion(Style.COLOR_C()));
+        hbox.addLast(createChorus(Style.COLOR_B()));
         vbox.add(hbox);
         hbox = new HBox();
-        hbox.add(createPan(Style.COLOR_B()));
-        hbox.add(createEqualizer(Style.COLOR_A()));
-        hbox.addLast(createVocoder(Style.COLOR_B()));
+        hbox.add(createDistortion(Style.COLOR_C()));
+        hbox.add(createPan(Style.COLOR_A()));
+        hbox.add(createEqualizer(Style.COLOR_B()));
+        hbox.addLast(createVocoder(Style.COLOR_C()));
         vbox.add(hbox);
 
         arpEffectsPanel.add(vbox, BorderLayout.CENTER);
@@ -449,13 +449,14 @@ class UIBuilder {
         Category category = new Category(synth, "Reverb", color);
 
         HBox hbox = new HBox();
-//        VBox vbox = new VBox();
-//        vbox.add(createChooser("Type", REVERB_TYPE));
-//        hbox.add(vbox);
+        VBox vbox = new VBox();
+        vbox.add(createChooser("Type", REVERB_TYPE));
+        hbox.add(vbox);
         hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), REVERB_SEND_LEVEL, color));
+        hbox.add(createLabelledDial(Arrays.asList("Early", "Reflection"), REVERB_EARLY_REFLECTION, color));
         hbox.add(createLabelledDial("Mod Wheel", REVERB_SEND_MODWHEEL, color));
         hbox.add(createLabelledDial("Decay", REVERB_DECAY, color));
-//        hbox.add(createLabelledDial("HF Damp", REVERB_HF_DAMP, color));
+        hbox.add(createLabelledDial("HF Damp", REVERB_HF_DAMP, color));
         category.add(hbox);
 
         return category;
@@ -464,10 +465,10 @@ class UIBuilder {
     private JComponent createChorus(Color color) {
         Category category = new Category(synth, "Chorus", color);
         HBox hbox = new HBox();
-//        VBox vbox = new VBox();
-//        vbox.add(createChooser("Type", CHORUS_TYPE));
+        VBox vbox = new VBox();
+        vbox.add(createChooser("Type", CHORUS_TYPE));
 //        vbox.add(createChooser("Global Sync", CHORUS_GLOBAL_SYNC));
-//        hbox.add(vbox);
+        hbox.add(vbox);
         hbox.add(createLabelledDial(Arrays.asList("Send", "Level"), CHORUS_SEND_LEVEL, color));
         hbox.add(createLabelledDial("Mod Wheel", CHORUS_MODWHEEL_DEPTH, color));
 //
@@ -509,17 +510,14 @@ class UIBuilder {
         return category;
         }
 
-    // TODO - still missing:
-    // - pan type
-    // - dry level
-    //
     private JComponent createPan(Color color) {
         Category category = new Category(synth, "Panning", color);
 
         HBox hbox = new HBox();
 
         VBox vbox = new VBox();
-        vbox.add(createCheckBox("Enable", PANNING_EFFECTS));
+        vbox.add(createCheckBox("Enable Effects", PANNING_EFFECT_ON_OFF));
+        vbox.add(createChooser("Effect Types", PANNING_EFFECT_TYPE));
         hbox.add(vbox);
 
         hbox.add(createLabelledDial("Position", PANNING_POSITION, color));
