@@ -112,15 +112,19 @@ class UIBuilder {
 
         HBox hbox = new HBox();
         VBox vbox = new VBox();
+        vbox.add(createChooser("Polyphony", POLYPHONY_CONFIG));
         vbox.add(createChooser("Polyphony Mode", POLYPHONY_MODE));
-        vbox.add(createChooser("Oscillator Mode", OSC_MODE));
-        vbox.add(createCheckBox("Constant Gate", CONSTANT_GATE));
         hbox.add(vbox);
 
         vbox = new VBox();
+        vbox.add(createChooser("Oscillator Mode", OSC_MODE));
         vbox.add(createChooser("DCO/VCO", DCO_VCO_MODE));
+        hbox.add(vbox);
+
+        vbox = new VBox();
         // TODO - move to Portamento ?
         vbox.add(createChooser("Glide Type", GLIDE_TYPE));
+        vbox.add(createCheckBox("Constant Gate", CONSTANT_GATE));
         hbox.add(vbox);
 
         hbox.add(createLabelledDial(Arrays.asList("Unison", "Voices"), UNISON_VOICES, color));

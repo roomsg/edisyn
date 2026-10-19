@@ -459,7 +459,9 @@ class Convertors {
         PACKED_113(null, null, 113) {
             @Override
             public void toModel (Model model, int value){
-                if (value >= 36 && value < 55)
+                if (value >= 1 && value < 3)
+                    model.set(POLYPHONY_CONFIG.getKey(), value - 1);
+                else if (value >= 36 && value < 55)
                     model.set(EFFECTS_CONFIG.getKey(), value - 36);
                 else if (value >= 71 && value < 76) {
                     model.set(EFFECTS_INPUT.getKey(), value - 71);
@@ -471,7 +473,9 @@ class Convertors {
 
             @Override
             public int toSynth (Model model, String key){
-                if (key.equals(EFFECTS_CONFIG.getKey())) {
+                if (key.equals(POLYPHONY_CONFIG.getKey())) {
+                    return model.get(key) + 1;
+                } else if (key.equals(EFFECTS_CONFIG.getKey())) {
                     return model.get(key) + 36;
                 } else if (key.equals(EFFECTS_INPUT.getKey())) {
                     return model.get(key) + 71;

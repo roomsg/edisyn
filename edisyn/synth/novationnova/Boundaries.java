@@ -23,6 +23,7 @@ public enum Boundaries implements Boundary {
     // param-related: some are specific
     OSC_MODE("Percussive", "Ensemble"),
     DCO_VCO("DCO", "VCO"),
+    POLYPHONY_CONFIG("Mono", "Poly"),
     POLYPHONY_MODE("Mode1", "Mode2"),
     PORTAMENTO_TYPE("Normal", "Glissando"),
     PORTAMENTO_MODE("Linear", "Exponential"),

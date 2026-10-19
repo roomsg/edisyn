@@ -246,10 +246,12 @@ public class NovationNova extends Synth {
 
     @Override
     protected void handleInRawCC(ShortMessage message) {
-        // hack alert, CC100/CC101 used as raw CC
+        // hack alert, CC38/CC100/CC101 used as raw CC
         if (
 //                message.getData1() == 96 ||
 //                message.getData1() == 97 ||
+                // TODO - check if we can avoid this 38 hack (ref flags on NRPN MSB/LSB)
+                message.getData1() == 38 ||
                 message.getData1() == 100 ||
                 message.getData1() == 101
         ) {

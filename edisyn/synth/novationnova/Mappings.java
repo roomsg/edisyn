@@ -45,6 +45,7 @@ enum Mappings {
     ////
     // program/patch & oscillators - global (= applying to all oscillators)
     ////
+    POLYPHONY_CONFIG(Convertors.Packed.PACKED_113, Boundaries.POLYPHONY_CONFIG),
     POLYPHONY_MODE(Convertors.Packed.PACKED_084, Boundaries.POLYPHONY_MODE),
     OSC_MODE(Convertors.Packed.PACKED_084, Boundaries.OSC_MODE),
     GLIDE_TYPE(Convertors.Packed.PACKED_001, Boundaries.GLIDE_TYPES),
