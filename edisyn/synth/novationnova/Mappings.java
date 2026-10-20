@@ -372,7 +372,7 @@ enum Mappings {
     ////
     REVERB_SEND_LEVEL(null, 91, null),
     REVERB_TYPE(Convertors.Packed.PACKED_CC_100, Boundaries.REVERB_TYPES),
-    REVERB_EARLY_REFLECTION(Convertors.Packed.PACKED_CC_100, Boundaries.MAX_7),
+    REVERB_EARLY_REFLECTION(Convertors.Packed.PACKED_CC_100, Boundaries.OCTAL),
     REVERB_SEND_MODWHEEL(null, 84, null, Boundaries.CENTRIC_127),
     REVERB_DECAY(null, 95, null),
     REVERB_HF_DAMP(null, 96, null),
@@ -385,9 +385,10 @@ enum Mappings {
     // Effects - vocoder
     ////
     VOCODER_BALANCE(null, null, 102),
-//    VOCODER_STEREO_WIDTH(90, null, null),
-//    VOCODER_SIBILANCE_TYPE(Convertors.Packed.PACKED10, Boundaries.SIBILANCE_TYPES),
-//    VOCODER_SIBILANCE_LEVEL(91, null, null),
+    VOCODER_INPUT(Convertors.Packed.PACKED_113, Boundaries.VOCODER_INPUTS),
+    VOCODER_SIBILANCE_TYPE(Convertors.Packed.PACKED_113, Boundaries.VOCODER_SIBILANCE_TYPES),
+    VOCODER_SIBILANCE_LEVEL(Convertors.Packed.PACKED_113, Boundaries.HEXADECIMAL),
+    VOCODER_WIDTH(Convertors.Packed.PACKED_113, Boundaries.HEXADECIMAL),
     ////
     // Effects - panning
     ////

@@ -461,11 +461,18 @@ class Convertors {
             public void toModel (Model model, int value){
                 if (value >= 1 && value < 3)
                     model.set(POLYPHONY_CONFIG.getKey(), value - 1);
+                else if (value >= 16 && value < 18)
+                    model.set(VOCODER_SIBILANCE_TYPE.getKey(), value - 16);
+                else if (value >= 18 && value < 20)
+                    model.set(VOCODER_INPUT.getKey(), value - 18);
                 else if (value >= 36 && value < 55)
                     model.set(EFFECTS_CONFIG.getKey(), value - 36);
-                else if (value >= 71 && value < 76) {
+                else if (value >= 71 && value < 76)
                     model.set(EFFECTS_INPUT.getKey(), value - 71);
-                }
+                else if (value >= 96 && value < 112)
+                    model.set(VOCODER_SIBILANCE_LEVEL.getKey(), value - 96);
+                else if (value >= 112 && value < 128)
+                    model.set(VOCODER_WIDTH.getKey(), value - 112);
                 else
                     // TODO
                     System.out.println("#113?" + value);
@@ -475,10 +482,18 @@ class Convertors {
             public int toSynth (Model model, String key){
                 if (key.equals(POLYPHONY_CONFIG.getKey())) {
                     return model.get(key) + 1;
+                } else if (key.equals(VOCODER_SIBILANCE_TYPE.getKey())) {
+                    return model.get(key) + 16;
+                } else if (key.equals(VOCODER_INPUT.getKey())) {
+                    return model.get(key) + 18;
                 } else if (key.equals(EFFECTS_CONFIG.getKey())) {
                     return model.get(key) + 36;
                 } else if (key.equals(EFFECTS_INPUT.getKey())) {
                     return model.get(key) + 71;
+                } else if (key.equals(VOCODER_SIBILANCE_LEVEL.getKey())) {
+                    return model.get(key) + 96;
+                } else if (key.equals(VOCODER_WIDTH.getKey())) {
+                    return model.get(key) + 112;
                 }
                 // TODO
                 System.out.println("#113?" + key);

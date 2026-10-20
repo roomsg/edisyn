@@ -250,10 +250,9 @@ public class NovationNova extends Synth {
         if (
 //                message.getData1() == 96 ||
 //                message.getData1() == 97 ||
-                // TODO - check if we can avoid this 38 hack (ref flags on NRPN MSB/LSB)
                 message.getData1() == 38 ||
-                message.getData1() == 100 ||
-                message.getData1() == 101
+                message.getData1() == 100 ||    // RPN LSB
+                message.getData1() == 101       // RPN MSB
         ) {
             // System.out.println("hack-alert:" + message.getData1() + ", " + message.getData2());
             Midi.CCData ccdata = new Midi.CCData(0, message.getData1(), message.getData2(), message.getChannel(), false);
