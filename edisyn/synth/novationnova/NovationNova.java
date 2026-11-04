@@ -245,7 +245,7 @@ public class NovationNova extends Synth {
 
 
     @Override
-    protected void handleInRawCC(ShortMessage message) {
+    public void handleInRawCC(ShortMessage message) {
         // hack alert, CC38/CC100/CC101 used as raw CC
         if (
 //                message.getData1() == 96 ||

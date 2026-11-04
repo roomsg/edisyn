@@ -1,7 +1,7 @@
 ![Edisyn Splash Banner](https://raw.githubusercontent.com/eclab/edisyn/master/resources/pics/Banner.png)
 
 # Edisyn
-Synthesizer Patch Editor and Librarian (Version 37)
+Synthesizer Patch Editor and Librarian (Version 38˙)
 
 By Sean Luke (sean@cs.gmu.edu)
 
@@ -31,9 +31,9 @@ Donations are welcome via Paypal to my email address (sean@cs.gmu.edu).
 
 **Edisyn was featured on Bad Gear!** The second [M-Audio Venom](https://www.youtube.com/watch?v=Nzg030Cx5Vc) video featured Edisyn extensively and warmly as Edisyn is presently the only editor available for the unit on the Mac (and the best one overall).
 
-* New patch editors for the Kawai K5000 family!  This was a big, and difficult, one.
-* Bug fixes the CC reception and output for the D Station and Drumstation.  Thanks to Guy Rooms.
-* New version of the Waldorf M editor with revision to match the M's current firmware.
+* New patch editor for the Novation Bass Station II.
+* E-Mu Proteus 2000 family support extended for the Audity 2000, plus bug fixes.  Thanks to Ray Bellis.
+* E-Mu Proteus 2500 Pattern / Song upload and download support.
 * Assorted bug fixes
 
 
@@ -85,6 +85,7 @@ Edisyn presently supports:
 * Korg Volca Series (Joint editor for Bass, Beats, Drum Single, Drum Split, FM, Keys, Kick, NuBass, Sample/Sample2 Multi, Sample2 Single, /u/pajen firmware)
 * M-Audio Venom (Single, Multi, Arpeggiator, and Global Modes)
 * Novation A Station
+* Novation Bass Station II
 * Novation Drumstation and D Station
 * Novation ReMOTE SL, SL MKII, and SL Compact Series
 * Oberheim Matrix 6, 6R, and 1000 (Single and (for 1000) Global Modes) 
@@ -186,7 +187,7 @@ At present Edisyn only runs under Rosetta on the M1.  It'll work fine; there are
 
 I believe that the following should work:
 
-1. Download and install at least Java 20.  There are two options.  I suggest OpenJDK: [Microsoft's OpenJDK installation](https://www.microsoft.com/openjdk) is the easiest route.  An alternative is to install [Oracle's JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html), but it has more onerous license restrictions.  
+1. Download and install a recent version of Java (such as Java 25).  There are two options.  I suggest OpenJDK: [Microsoft's OpenJDK installation](https://www.microsoft.com/openjdk) is the easiest route.  An alternative is to install [Oracle's JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html), but it has more onerous license restrictions.  
 2. Download Edisyn's jar file, called [edisyn.jar](https://people.cs.gmu.edu/~eclab/projects/edisyn/edisyn.jar).
 3. Double-click on edisyn.jar to launch Edisyn.
 
