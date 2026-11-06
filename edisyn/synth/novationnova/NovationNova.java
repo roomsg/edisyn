@@ -188,16 +188,16 @@ public class NovationNova extends Synth {
             .withProgramNumber(programNumber)
             .withSoftwareVersion((byte) synthModel.get(KEY_SOFTWARE_VERSION))
             .withVersionIncrement((byte) synthModel.get(KEY_VERSION_INCREMENT));
-        for (int byteIndex = 0; byteIndex < type.getPayloadSize(); ++byteIndex) {
-            Optional<Convertor> convertor = Convertors.getByIndex(byteIndex);
-            // TODO - revisit for nova
+        // TODO - revisit for nova
+//        for (int byteIndex = 0; byteIndex < type.getPayloadSize(); ++byteIndex) {
+//            Optional<Convertor> convertor = Convertors.getByIndex(byteIndex);
             /*
             if (convertor.isPresent()) {
                 int value = convertor.get().toSynth(synthModel);
                 builder.withPayload(byteIndex, (byte) value);
                 }
             */
-            }
+//            }
         byte[] bytes = builder.build().getBytes();
         // System.out.println(StringUtility.toHex(bytes));
         return bytes;

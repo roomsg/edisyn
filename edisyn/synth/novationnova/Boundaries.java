@@ -13,8 +13,8 @@ public enum Boundaries implements Boundary {
     BOOLEAN(0, 1),
     OCTAL(0, 7),
     HEXADECIMAL(0, 15),
-    CENTRIC_24(52, 76, 64),
-    CENTRIC_100(14, 114, 64),
+//    CENTRIC_24(52, 76, 64),
+//    CENTRIC_100(14, 114, 64),
     CENTRIC_127(0, 127, 64),
     // param-related: some are specific
     OSC_MODE("Percussive", "Ensemble"),
@@ -30,9 +30,9 @@ public enum Boundaries implements Boundary {
     OSC_OCTAVES("-2", "-1", "0", "1", "2"),
     OSC_SEMITONES(IntStream.rangeClosed(-12, 12).boxed().map(String::valueOf)),
     BEND_WHEEL(OSC_SEMITONES),
-    PWM_SOURCE("Manual", "LFO2", "Mod Env"), // 3 values from the docs / in practice only first 2 get evented
+//    PWM_SOURCE("Manual", "LFO2", "Mod Env"), // 3 values from the docs / in practice only first 2 get evented
     ENV_TRIGGERS("Multi", "Single"),
-    MIXER_SELECT("Noise", "1*2", "Ext"),
+//    MIXER_SELECT("Noise", "1*2", "Ext"),
     FILTER_TYPES("LPF", "BPF", "HPF", "RES LPF", "RES BPF", "RES HPF", "Notch", "LPF+LPF", "BPF+BPF", "HPF+HPF", "LPF+BPF", "BPF+HPF"),
     FILTER_SLOPES("12dB/Octave", "18dB/Octave", "24dB/Octave"),
     FILTER_SPECIAL_WIDTH(IntStream.rangeClosed(0, 7).boxed().map(i -> String.valueOf(i * 8))),
@@ -48,11 +48,11 @@ public enum Boundaries implements Boundary {
             "Medium Type 1", "Medium Type 2", "Medium Plate 1", "Medium Plate 2",
             "Large Type 1", "Large Type 2", "Large Plate 1", "Large Plate 2"),
     CHORUS_TYPES("Quad Chorus", "Chorus/Flanger", "Phaser"),
-    KEYSYNC_PHASE("Free Running", "0", "24", "48", "72", "96", "120", "144", "168", "192", "216", "240", "264", "288", "312", "336"),
+//    KEYSYNC_PHASE("Free Running", "0", "24", "48", "72", "96", "120", "144", "168", "192", "216", "240", "264", "288", "312", "336"),
     ARP_OCTAVES("1", "2", "3", "4"),
     ARP_GATE_TIMES("25%", "50%", "75%", "99%"),
     ARP_OUTPUT("Program", "Program & Midi", "Midi"),
-    ARP_PATTERN("Up", "Down", "Up-Down 1", "Up-Down 2", "Order", "Random"),
+//    ARP_PATTERN("Up", "Down", "Up-Down 1", "Up-Down 2", "Order", "Random"),
     ARP_PATTERN_BANK("Mono", "Poly", "User"),
     ARP_LATCH_TYPE("Constant", "Pattern"),
     ARP_QUANTIZE("Off", "Mode1", "Mode2", "Mode3", "Mode4"),
@@ -65,9 +65,9 @@ public enum Boundaries implements Boundary {
             "[R+C]>D", "[D+C]>R", "[D+R]>C"),
     EFFECTS_INPUT("Program Only", "Audio Input (1) Only", "Program & Input (1)",
             "Audio Input (2) Only", "Program & Input (2)"),
-    EQUALIZER_GLOBAL_SYNC("Off", "Low", "Mid", "High"),
-    CHORUS_GLOBAL_SYNC("Off", "Left", "Center", "Right"),
-    PANNING_GLOBAL_SYNC(CHORUS_GLOBAL_SYNC),
+//    EQUALIZER_GLOBAL_SYNC("Off", "Low", "Mid", "High"),
+//    CHORUS_GLOBAL_SYNC("Off", "Left", "Center", "Right"),
+//    PANNING_GLOBAL_SYNC(CHORUS_GLOBAL_SYNC),
     PANNING_EFFECT_TYPES("AutoPan", "Tremolo", "L - R", "R - L"),
     SYNC_RATES("N/A", "32t", "32", "16t", "16", "8t", "16d", "8", "4t", "8d", "4", "2t", "4d", "2", "1t", "2d",
         "1b", "2t", "1d", "2b", "4t", "3b", "5t", "4b", "3d", "7t", "5b", "8t", "6b", "7b", "5d", "8b", "6d", "7d", "8d"),
@@ -79,15 +79,15 @@ public enum Boundaries implements Boundary {
     DELAY_RATIO("1-1", "4-3", "3-4", "3-2", "2-3",
             "2-1", "1-2", "3-1", "1-3", "4-1", "1-4",
             // note: next 2 are handled by another packed NRPN ?!?!
-            "1-0", "0-1"),
-    EQUALIZER_LEVEL(IntStream.rangeClosed(0, 127).boxed().map(i -> {
-                if (i < 64) {
-                    return "LP " + i;
-                    } else if (i > 64) {
-                    return "HP " + i;
-                    }
-                return "--";
-                }), 64);
+            "1-0", "0-1");
+//    EQUALIZER_LEVEL(IntStream.rangeClosed(0, 127).boxed().map(i -> {
+//                if (i < 64) {
+//                    return "LP " + i;
+//                    } else if (i > 64) {
+//                    return "HP " + i;
+//                    }
+//                return "--";
+//                }), 64);
 
     private final int min;
     private final int max;

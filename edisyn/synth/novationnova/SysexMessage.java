@@ -186,12 +186,12 @@ class SysexMessage {
         return bytes[12];
         }
 
-    String getFullVersion() {
-        byte softwareVersion = getSoftwareVersion();
-        int major = softwareVersion >> 3;
-        int minor = softwareVersion & 0x7;
-        return major + "." + minor + "." + String.format("%02d", getVersionIncrement());
-        }
+//    String getFullVersion() {
+//        byte softwareVersion = getSoftwareVersion();
+//        int major = softwareVersion >> 3;
+//        int minor = softwareVersion & 0x7;
+//        return major + "." + minor + "." + String.format("%02d", getVersionIncrement());
+//        }
 
     private byte[] validate(byte[] bytes) {
         SysexMessage.Type type = Type.typemap.get(bytes[INDEX_TYPE]);

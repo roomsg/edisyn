@@ -5,7 +5,6 @@ import edisyn.gui.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -181,7 +180,6 @@ class UIBuilder {
         mainVbox.add(hbox);
 
         // mod matrix
-        hbox = new HBox();
         Map<String, Mappings> modulationDestinationMappings = new LinkedHashMap<>();
         modulationDestinationMappings.put("Mix", Mappings.find("OSC%d_MIX", osc));
         modulationDestinationMappings.put("Pitch", Mappings.find("OSC%d_PITCH", osc));
