@@ -5,11 +5,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public enum Boundaries implements Boundary {
-    // dummy entry, only here for the sake of code simplicity
-    MODULATION_DESTINATION_OSC("Mix", "Pitch", "Width", "Sync", "Soften"),
-    MODULATION_DESTINATION_XMOD("Mix"),
-    MODULATION_DESTINATION_NOISE("Mix", "Soften"),
-    MODULATION_DESTINATION_FILTER("Frequency", "Resonance"),
     // non param related
     BANKS(IntStream.rangeClosed(1, 4).boxed().map(String::valueOf)),
     PATCH_NUMBERS(IntStream.rangeClosed(0, 99).boxed().map(String::valueOf)),

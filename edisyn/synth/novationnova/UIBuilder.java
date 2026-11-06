@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static edisyn.gui.Style.COLOR_GLOBAL;
 import static edisyn.synth.novationnova.Mappings.*;
@@ -24,32 +25,88 @@ class UIBuilder {
         }
 
     void build() {
-        // General PANEL
+        // General PANEL (+ arp/effects)
         JComponent generalPanel = new SynthPanel(synth);
         VBox vbox = new VBox();
         HBox hbox = new HBox();
         hbox.add(createGlobal(COLOR_GLOBAL()));
         hbox.add(createGeneral(Style.COLOR_A()));
-        hbox.addLast(createPortamento(Style.COLOR_C()));
-        vbox.add(hbox);
-
-        vbox.add(createOscillator(1, Style.COLOR_B()));
-        vbox.add(createOscillator(2, Style.COLOR_B()));
-        vbox.add(createOscillator(3, Style.COLOR_B()));
-        hbox = new HBox();
-        hbox.add(createXMod(1, Style.COLOR_B()));
-        hbox.add(createXMod(2, Style.COLOR_B()));
+        hbox.addLast(createPortamento(Style.COLOR_B()));
         vbox.add(hbox);
 
         hbox = new HBox();
-        hbox.addLast(createNoise(Style.COLOR_B()));
+        hbox.addLast(createARP(Style.COLOR_C()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createEffectConfig(Style.COLOR_A()));
+        hbox.addLast(createEqualizer(Style.COLOR_B()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createDelay(Style.COLOR_C()));
+        hbox.addLast(createDistortion(Style.COLOR_A()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createReverb(Style.COLOR_B()));
+        hbox.addLast(createPan(Style.COLOR_C()));
+        vbox.add(hbox);
+        hbox = new HBox();
+        hbox.add(createChorus(Style.COLOR_A()));
+        hbox.addLast(createVocoder(Style.COLOR_B()));
         vbox.add(hbox);
 
         generalPanel.add(vbox, BorderLayout.CENTER);
-        synth.addTab("General", generalPanel);
+        synth.addTab("General Arp Effects", generalPanel);
 
-        // Envelope, LFO, Filter PANEL
-        JComponent envelopeLfoFilterPanel = new SynthPanel(synth);
+        // OSC1 PANEL
+        JComponent osc1Panel = new SynthPanel(synth);
+        vbox = new VBox();
+        vbox.add(createOscillator(1, Style.COLOR_A()));
+        osc1Panel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Osc1", osc1Panel);
+
+        // OSC2 PANEL
+        JComponent osc2Panel = new SynthPanel(synth);
+        vbox = new VBox();
+        vbox.add(createOscillator(2, Style.COLOR_A()));
+        osc2Panel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Osc2", osc2Panel);
+
+        // OSC3 PANEL
+        JComponent osc3Panel = new SynthPanel(synth);
+        vbox = new VBox();
+        vbox.add(createOscillator(3, Style.COLOR_A()));
+        osc3Panel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Osc3", osc3Panel);
+
+        // xMod Noise PANEL
+        JComponent noiseXModPanel = new SynthPanel(synth);
+        vbox = new VBox();
+        hbox = new HBox();
+        hbox.addLast(createNoise(Style.COLOR_A()));
+        vbox.add(hbox);
+
+        hbox = new HBox();
+        hbox.addLast(createXMod(1, Style.COLOR_B()));
+        vbox.add(hbox);
+
+        hbox = new HBox();
+        hbox.addLast(createXMod(2, Style.COLOR_C()));
+        vbox.add(hbox);
+
+        noiseXModPanel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Noise XMod", noiseXModPanel);
+
+        // Filter PANEL
+        JComponent filterPanel = new SynthPanel(synth);
+        vbox = new VBox();
+        hbox = new HBox();
+        hbox.addLast(createFilter(Style.COLOR_A()));
+        vbox.add(hbox);
+        filterPanel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Filter", filterPanel);
+
+        // Envelope, LFO PANEL
+        JComponent envelopeLfoPanel = new SynthPanel(synth);
         vbox = new VBox();
         vbox.add(createEnvelope(1, Style.COLOR_A()));
         vbox.add(createEnvelope(2, Style.COLOR_A()));
@@ -62,34 +119,8 @@ class UIBuilder {
         hbox.addLast(createLFO(2, Style.COLOR_B()));
         vbox.add(hbox);
 
-        vbox.addLast(createFilter(Style.COLOR_C()));
-
-        envelopeLfoFilterPanel.add(vbox, BorderLayout.CENTER);
-        synth.addTab("Env LFO Filter", envelopeLfoFilterPanel);
-
-        // ARP, EFFECTS PANEL
-        JComponent arpEffectsPanel = new SynthPanel(synth);
-        vbox = new VBox();
-        hbox = new HBox();
-        hbox.addLast(createARP(Style.COLOR_A()));
-        vbox.add(hbox);
-        hbox = new HBox();
-        hbox.add(createEffectConfig(Style.COLOR_B()));
-        hbox.addLast(createDelay(Style.COLOR_C()));
-        vbox.add(hbox);
-        hbox = new HBox();
-        hbox.add(createReverb(Style.COLOR_A()));
-        hbox.addLast(createChorus(Style.COLOR_B()));
-        vbox.add(hbox);
-        hbox = new HBox();
-        hbox.add(createDistortion(Style.COLOR_C()));
-        hbox.add(createPan(Style.COLOR_A()));
-        hbox.add(createEqualizer(Style.COLOR_B()));
-        hbox.addLast(createVocoder(Style.COLOR_C()));
-        vbox.add(hbox);
-
-        arpEffectsPanel.add(vbox, BorderLayout.CENTER);
-        synth.addTab("Arp Effects", arpEffectsPanel);
+        envelopeLfoPanel.add(vbox, BorderLayout.CENTER);
+        synth.addTab("Env LFO", envelopeLfoPanel);
         }
 
     private JComponent createGlobal(Color color) {
@@ -134,32 +165,43 @@ class UIBuilder {
         Category category = new Category(synth, "Oscillator " + osc, color);
         category.makePasteable("osc");
 
+        VBox mainVbox = new VBox();
+
         HBox hbox = new HBox();
         VBox vbox = new VBox();
         vbox.add(createChooser("Waveform", Mappings.find("OSC%d_WAVEFORM", osc)));
         hbox.add(vbox);
+        mainVbox.add(hbox);
 
+        hbox = new HBox();
         hbox.add(createLabelledDial("Octave", Mappings.find("OSC%d_OCTAVE", osc), color));
         hbox.add(createLabelledDial("Semitone", Mappings.find("OSC%d_SEMITONE", osc), color));
         hbox.add(createLabelledDial("Detune", Mappings.find("OSC%d_FINE_TUNE", osc), color));
         hbox.add(createLabelledDial(Arrays.asList("Bend Wheel", "Depth"), Mappings.find("OSC%d_BENDWHEEL_AMOUNT", osc), color));
-        hbox.add(createLabelledDial(Arrays.asList("Key", "Sync"), Mappings.find("OSC%d_KEY_SYNC", osc), color));
-        hbox.add(createLabelledDial(Arrays.asList("Sync", "Skew"), Mappings.find("OSC%d_SYNC_SKEW", osc), color));
-        hbox.add(createLabelledDial(Arrays.asList("Sync", "Formant", "Width"), Mappings.find("OSC%d_SYNC_FORMANT_WIDTH", osc), color));
-        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO1", "Amount"), Mappings.find("OSC%d_MODWHEEL_LFO1_AMOUNT", osc), color));
-        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO1", "Amount"), Mappings.find("OSC%d_AFTERTOUCH_LFO1_AMOUNT", osc), color));
+        mainVbox.add(hbox);
 
         // mod matrix
-        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        hbox = new HBox();
+        Map<String, Mappings> modulationDestinationMappings = new LinkedHashMap<>();
         modulationDestinationMappings.put("Mix", Mappings.find("OSC%d_MIX", osc));
         modulationDestinationMappings.put("Pitch", Mappings.find("OSC%d_PITCH", osc));
         modulationDestinationMappings.put("Width", Mappings.find("OSC%d_WIDTH", osc));
         modulationDestinationMappings.put("Sync", Mappings.find("OSC%d_SYNC", osc));
         modulationDestinationMappings.put("Soften", Mappings.find("OSC%d_SOFTEN", osc));
-        JComponent modulationPanel = createModulationPanel(Mappings.find("MODULATION_OSC%d", osc), modulationDestinationMappings, color);
-        hbox.add(modulationPanel);
+        Stream<HBox> hboxes = createModulationPanels(modulationDestinationMappings, color);
+        hboxes.forEach(mainVbox::add);
 
-        category.add(hbox, BorderLayout.CENTER);
+        // at last: some more exotic (hidden in menu) parameters
+        hbox = new HBox();
+        hbox.add(createLabelledDial(Arrays.asList("Key", "Sync"), Mappings.find("OSC%d_KEY_SYNC", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Sync", "Skew"), Mappings.find("OSC%d_SYNC_SKEW", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Sync", "Formant", "Width"), Mappings.find("OSC%d_SYNC_FORMANT_WIDTH", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO1", "Amount"), Mappings.find("OSC%d_MODWHEEL_LFO1_AMOUNT", osc), color));
+        hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO1", "Amount"), Mappings.find("OSC%d_AFTERTOUCH_LFO1_AMOUNT", osc), color));
+        mainVbox.add(hbox);
+
+        category.add(mainVbox, BorderLayout.CENTER);
+
         return category;
         }
 
@@ -167,78 +209,28 @@ class UIBuilder {
         Category category = new Category(synth, "Xmod " + xmod + "x3", color);
         category.makePasteable("xmod");
 
-        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        VBox vbox = new VBox();
+        Map<String, Mappings> modulationDestinationMappings = new LinkedHashMap<>();
         modulationDestinationMappings.put("Mix", Mappings.find("XMOD%d_MIX", xmod));
-        JComponent modulationPanel = createModulationPanel(Mappings.find("MODULATION_XMOD%d", xmod), modulationDestinationMappings, color);
+        Stream<HBox> hboxes = createModulationPanels(modulationDestinationMappings, color);
+        hboxes.forEach(vbox::add);
 
-        category.add(modulationPanel, BorderLayout.CENTER);
+        category.add(vbox, BorderLayout.CENTER);
         return category;
     }
 
     private JComponent createNoise(Color color) {
         Category category = new Category(synth, "Noise", color);
 
-        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
+        VBox vbox = new VBox();
+        Map<String, Mappings> modulationDestinationMappings = new LinkedHashMap<>();
         modulationDestinationMappings.put("Mix", NOISE_MIX);
         modulationDestinationMappings.put("Soften", NOISE_SOFTEN);
-        JComponent modulationPanel = createModulationPanel(MODULATION_NOISE, modulationDestinationMappings, color);
+        Stream<HBox> hboxes = createModulationPanels(modulationDestinationMappings, color);
+        hboxes.forEach(vbox::add);
 
-        category.add(modulationPanel, BorderLayout.CENTER);
+        category.add(vbox, BorderLayout.CENTER);
         return category;
-    }
-
-    private JComponent createModulationPanel(Mappings modulationDestinationMapping, Map<String, Mappings> mappings, Color color) {
-        HBox hbox = new HBox();
-
-        VBox vbox = new VBox();
-        Chooser chooser = createChooser("Modulation Destination", modulationDestinationMapping);
-        vbox.add(chooser);
-        hbox.add(vbox);
-
-        List<String> modulationDestinations = Arrays.asList(modulationDestinationMapping.getBoundaries().getValues());
-        Set<String> modulationDestinationsSet = new HashSet<>(modulationDestinations);
-        Set<String> expectedModulationDestinations = mappings.keySet();
-        if (!modulationDestinationsSet.equals(expectedModulationDestinations)) {
-            throw new IllegalStateException("Unexpected modulation destinations:" + modulationDestinationsSet + " VS " + expectedModulationDestinations);
-        }
-
-        List<JPanel> panels = new ArrayList<>();
-        for (String modulationDestination:modulationDestinations) {
-            JPanel panel = new JPanel();
-            panels.add(panel);
-            Mappings modulationDesination = mappings.get(modulationDestination);
-            // TODO small hack here for the sake of consistent layout
-            panel.add(createLabelledDial(Arrays.asList("Level", "-"), modulationDesination, color));
-            panel.add(createLabelledDial(Arrays.asList("Lfo1", "Depth"), Mappings.valueOf(modulationDesination.name() + "_LFO1_DEPTH"), color));
-            panel.add(createLabelledDial(Arrays.asList("Lfo2", "Depth"), Mappings.valueOf(modulationDesination.name() + "_LFO2_DEPTH"), color));
-            panel.add(createLabelledDial(Arrays.asList("Env2", "Depth"), Mappings.valueOf(modulationDesination.name() + "_ENV2_DEPTH"), color));
-            panel.add(createLabelledDial(Arrays.asList("Env3", "Depth"), Mappings.valueOf(modulationDesination.name() + "_ENV3_DEPTH"), color));
-            panel.add(createLabelledDial(Arrays.asList("Wheel", "Depth"), Mappings.valueOf(modulationDesination.name() + "_WHEEL_DEPTH"), color));
-
-            // keep UI consistent
-            panel.setBackground(Style.BACKGROUND_COLOR());
-
-            hbox.add(panel);
-        }
-
-        // show/hide controls upon user selected
-        JComboBox combo = chooser.getCombo();
-        combo.addItemListener(il -> {
-            if (il.getStateChange() == ItemEvent.SELECTED) {
-                refreshPanels(combo, panels);
-            }
-        });
-        // next not working ?!
-        //combo.setEnabled(combo.getItemCount() > 1);
-        refreshPanels(combo, panels);
-        return hbox;
-    }
-
-    public void refreshPanels(JComboBox combo, List<JPanel> panels) {
-        int selection = combo.getSelectedIndex();
-        for (int i = 0; i < panels.size(); ++i) {
-            panels.get(i).setVisible(selection == i);
-        }
     }
 
     private JComponent createPortamento(Color color) {
@@ -261,32 +253,30 @@ class UIBuilder {
         VBox mainvbox = new VBox();
 
         HBox hbox = new HBox();
-        VBox vbox1 = new VBox();
-        vbox1.add(createChooser("Type", FILTER_TYPE));
-        vbox1.add(createChooser("Slope", FILTER_SLOPE));
-        hbox.add(vbox1);
+        hbox.add(createChooser("Type", FILTER_TYPE));
+        hbox.add(createChooser("Slope", FILTER_SLOPE));
+        mainvbox.add(hbox);
 
-        hbox.add(createLabelledDial("Frequency", FILTER_FREQUENCY, color));
-        hbox.add(createLabelledDial("Resonance", FILTER_RESONANCE, color));
+        Map<String, Mappings> modulationDestinationMappings = new LinkedHashMap<>();
+        modulationDestinationMappings.put("Frequency", FILTER_FREQUENCY);
+        modulationDestinationMappings.put("Resonance", FILTER_RESONANCE);
+        Stream<HBox> hboxes = createModulationPanels(modulationDestinationMappings, color);
+        hboxes.forEach(mainvbox::add);
+
+        hbox = new HBox();
         hbox.add(createLabelledDial("Overdrive", FILTER_OVERDRIVE, color));
         hbox.add(createLabelledDial("Key Track", FILTER_KEY_TRACK, color));
         hbox.add(createLabelledDial("Q Normalize", FILTER_Q_NORMALIZE, color));
         hbox.add(createLabelledDial("Special Width", FILTER_SPECIAL_WIDTH, color));
+        mainvbox.add(hbox);
+
+        hbox = new HBox();
         hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO2", "Frequency", "Amount"), FILTER_MODWHEEL_LFO2_FREQUENCY_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Mod Wheel", "LFO2", "Resonance", "Amount"), FILTER_MODWHEEL_LFO2_RESONANCE_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2", "Frequency", "Amount"), FILTER_AFTERTOUCH_LFO2_FREQUENCY_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "LFO2", "Resonance", "Amount"), FILTER_AFTERTOUCH_LFO2_RESONANCE_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Frequency", "Amount"), FILTER_AFTERTOUCH_FREQUENCY_AMOUNT, color));
         hbox.add(createLabelledDial(Arrays.asList("Aftertouch", "Resonance", "Amount"), FILTER_AFTERTOUCH_RESONANCE_AMOUNT, color));
-
-        mainvbox.add(hbox);
-
-        hbox = new HBox();
-        Map<String, Mappings> modulationDestinationMappings = new HashMap<>();
-        modulationDestinationMappings.put("Frequency", FILTER_FREQUENCY);
-        modulationDestinationMappings.put("Resonance", FILTER_RESONANCE);
-        JComponent modulationPanel = createModulationPanel(MODULATION_FILTER, modulationDestinationMappings, color);
-        hbox.add(modulationPanel);
         mainvbox.add(hbox);
 
         category.add(mainvbox, BorderLayout.CENTER);
@@ -532,6 +522,20 @@ class UIBuilder {
         category.add(hbox);
         return category;
         }
+
+    // utility method to create multiple HBox for different modulation matrices
+    private Stream<HBox> createModulationPanels(Map<String, Mappings> mappings, Color color) {
+        return mappings.entrySet().stream().map(m -> {
+            HBox hbox = new HBox();
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Level"), Mappings.valueOf(m.getValue().name()), color));
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Lfo1", "Depth"), Mappings.valueOf(m.getValue().name() + "_LFO1_DEPTH"), color));
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Lfo2", "Depth"), Mappings.valueOf(m.getValue().name() + "_LFO2_DEPTH"), color));
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Env2", "Depth"), Mappings.valueOf(m.getValue().name() + "_ENV2_DEPTH"), color));
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Env3", "Depth"), Mappings.valueOf(m.getValue().name() + "_ENV3_DEPTH"), color));
+            hbox.add(createLabelledDial(Arrays.asList(m.getKey(), "Wheel", "Depth"), Mappings.valueOf(m.getValue().name() + "_WHEEL_DEPTH"), color));
+            return hbox;
+        });
+    }
 
     // convenience method to create chooser
     private Chooser createChooser(String label, Mappings mappings) {

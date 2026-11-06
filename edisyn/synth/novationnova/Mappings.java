@@ -24,16 +24,6 @@ import java.util.Objects;
  */
 enum Mappings {
     ////
-    // Dummy entries, only here for the sake of code simplicity
-    ////
-    MODULATION_OSC1(null, null, null, Boundaries.MODULATION_DESTINATION_OSC),
-    MODULATION_OSC2(null, null, null, Boundaries.MODULATION_DESTINATION_OSC),
-    MODULATION_OSC3(null, null, null, Boundaries.MODULATION_DESTINATION_OSC),
-    MODULATION_XMOD1(null, null, null, Boundaries.MODULATION_DESTINATION_XMOD),
-    MODULATION_XMOD2(null, null, null, Boundaries.MODULATION_DESTINATION_XMOD),
-    MODULATION_NOISE(null, null, null, Boundaries.MODULATION_DESTINATION_NOISE),
-    MODULATION_FILTER(null, null, null, Boundaries.MODULATION_DESTINATION_FILTER),
-    ////
     // Some special entries, only send to global channel
     // So: probably not stored within program
     // So: don't expect anything on the UI for now
